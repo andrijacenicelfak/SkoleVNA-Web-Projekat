@@ -1,0 +1,32 @@
+*** Skola van nastavnih aktivnosti ***
+
+	-	Skola
+		- Naziv				- string, 30 char
+		- Lokacija			- string, 30 char
+		- Tip				- string, 30 char
+		- Lista Aktivnosti	- List<Aktivnost>
+		- ID				- int
+	-	Aktivnost
+		- Naziv				- string, 30 char
+		- Cena				- int,	>0
+		- br.dana/nedeljno	- int, 0<x<=7
+		- Nastavnik			- Nastavnik
+		- Lista ucenik		- List<Pohadja>
+		- ID				- int
+	-	Pohadja
+		- ID				- int
+		- Koliko dugo		- int, >0
+		- Ocena				- int, 1<x<5
+	-	Nastavnik
+		- Ime				- string, 30 char
+		- Prezime			- string, 30 char
+		- Iskustvo			- int, >0
+		- ID				- int
+		- Aktivnost			- Aktivnost
+	-	Ucenik
+		- Ime				- string, 30 char
+		- Prezime			- string, 30 char
+		- br.tel/rod		- string, 30 char
+		- Ime.rod			- string, 30 char
+		- lista aktivnosti	- List<Pohadja>
+		
