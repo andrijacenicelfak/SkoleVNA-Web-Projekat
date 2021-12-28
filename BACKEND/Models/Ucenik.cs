@@ -1,29 +1,31 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-namespace Models{
+namespace Models
+{
 
     [Table("Ucenik")]
-    public class Ucenik{
+    public class Ucenik
+    {
         [Key]
-        public int ID {get; set;}
+        public int ID { get; set; }
 
         [Required]
         [MaxLength(30)]
-        public string Ime {get; set;}
+        public string Ime { get; set; }
 
         [Required]
         [MaxLength(30)]
-        public string Prezime {get; set;}
+        public string Prezime { get; set; }
 
         [Required]
         [MaxLength(30)]
-        public string BrojTelefonaRoditelja {get; set;}
+        public string BrojTelefonaRoditelja { get; set; }
 
         [MaxLength(30)]
-        public string ImeRoditelja {get; set;}
+        public string ImeRoditelja { get; set; }
 
-        public virtual List<Pohadja> ListaAktivnosti {get; set;}
+        public virtual List<Pohadja> ListaAktivnosti { get; set; }
 
     }
 }

@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Models;
 
-namespace SkolaVanNastavnihAktivnostiV2.Migrations
+namespace SkolaVanNastavnihAktivnosti.Migrations
 {
     [DbContext(typeof(SkolaContext))]
-    [Migration("20211124212803_v1")]
-    partial class v1
+    [Migration("20211222200805_V4")]
+    partial class V4
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,15 +34,20 @@ namespace SkolaVanNastavnihAktivnostiV2.Migrations
                     b.Property<int>("Cena")
                         .HasColumnType("int");
 
+                    b.Property<int?>("NastavnikID")
+                        .HasColumnType("int");
+
                     b.Property<string>("Naziv")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<int?>("SkolaID")
+                    b.Property<int>("SkolaID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("NastavnikID");
 
                     b.HasIndex("SkolaID");
 
@@ -55,9 +60,6 @@ namespace SkolaVanNastavnihAktivnostiV2.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("AktivnostID")
-                        .HasColumnType("int");
 
                     b.Property<string>("Ime")
                         .IsRequired()
@@ -73,9 +75,6 @@ namespace SkolaVanNastavnihAktivnostiV2.Migrations
                         .HasColumnType("nvarchar(30)");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("AktivnostID")
-                        .IsUnique();
 
                     b.ToTable("Nastavnik");
                 });
@@ -159,20 +158,19 @@ namespace SkolaVanNastavnihAktivnostiV2.Migrations
 
             modelBuilder.Entity("Models.Aktivnost", b =>
                 {
-                    b.HasOne("Models.Skola", null)
+                    b.HasOne("Models.Nastavnik", "Nastavnik")
                         .WithMany("Aktivnosti")
-                        .HasForeignKey("SkolaID");
-                });
+                        .HasForeignKey("NastavnikID");
 
-            modelBuilder.Entity("Models.Nastavnik", b =>
-                {
-                    b.HasOne("Models.Aktivnost", "Aktivnost")
-                        .WithOne("Nastavnik")
-                        .HasForeignKey("Models.Nastavnik", "AktivnostID")
+                    b.HasOne("Models.Skola", "Skola")
+                        .WithMany("Aktivnosti")
+                        .HasForeignKey("SkolaID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Aktivnost");
+                    b.Navigation("Nastavnik");
+
+                    b.Navigation("Skola");
                 });
 
             modelBuilder.Entity("Models.Pohadja", b =>
@@ -193,8 +191,11 @@ namespace SkolaVanNastavnihAktivnostiV2.Migrations
             modelBuilder.Entity("Models.Aktivnost", b =>
                 {
                     b.Navigation("ListaUcenka");
+                });
 
-                    b.Navigation("Nastavnik");
+            modelBuilder.Entity("Models.Nastavnik", b =>
+                {
+                    b.Navigation("Aktivnosti");
                 });
 
             modelBuilder.Entity("Models.Skola", b =>

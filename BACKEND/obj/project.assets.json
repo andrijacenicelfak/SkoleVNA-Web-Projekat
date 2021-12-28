@@ -7594,11 +7594,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Fakultet\\3\\Projekti\\Web\\SkolaVanNastavnihAktivnostiV2\\SkolaVanNastavnihAktivnostiV2.csproj",
-      "projectName": "SkolaVanNastavnihAktivnostiV2",
-      "projectPath": "D:\\Fakultet\\3\\Projekti\\Web\\SkolaVanNastavnihAktivnostiV2\\SkolaVanNastavnihAktivnostiV2.csproj",
+      "projectUniqueName": "D:\\Fakultet\\3\\Projekti\\Web\\SkoleVNA-Web-Projekat\\BACKEND\\SkolaVanNastavnihAktivnosti.csproj",
+      "projectName": "SkolaVanNastavnihAktivnosti",
+      "projectPath": "D:\\Fakultet\\3\\Projekti\\Web\\SkoleVNA-Web-Projekat\\BACKEND\\SkolaVanNastavnihAktivnosti.csproj",
       "packagesPath": "C:\\Users\\Lenovo\\.nuget\\packages\\",
-      "outputPath": "D:\\Fakultet\\3\\Projekti\\Web\\SkolaVanNastavnihAktivnostiV2\\obj\\",
+      "outputPath": "D:\\Fakultet\\3\\Projekti\\Web\\SkoleVNA-Web-Projekat\\BACKEND\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Lenovo\\AppData\\Roaming\\NuGet\\NuGet.Config",

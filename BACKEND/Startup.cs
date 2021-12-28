@@ -27,7 +27,7 @@ namespace SkolaVanNastavnihAktivnosti
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-           
+
             services.AddDbContext<SkolaContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("SkolaVNACS")));
 
             services.AddCors(options =>
@@ -43,7 +43,9 @@ namespace SkolaVanNastavnihAktivnosti
                         "http://127.0.0.1:5500",
                         "http://localhost:5500",
                         "https://127.0.0.1:5500",
-                        "https://localhost:5500"
+                        "https://localhost:5500",
+                        "https://127.0.0.1:5001",
+                        "https://localhost:5000"
                     })
                     .AllowAnyHeader()
                     .AllowAnyMethod();

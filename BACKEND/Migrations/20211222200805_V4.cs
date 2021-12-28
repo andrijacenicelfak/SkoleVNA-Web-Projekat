@@ -1,11 +1,26 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace SkolaVanNastavnihAktivnostiV2.Migrations
+namespace SkolaVanNastavnihAktivnosti.Migrations
 {
-    public partial class v1 : Migration
+    public partial class V4 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Nastavnik",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Ime = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    Prezime = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    Iskustvo = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Nastavnik", x => x.ID);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Skola",
                 columns: table => new
@@ -44,38 +59,23 @@ namespace SkolaVanNastavnihAktivnostiV2.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Naziv = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Cena = table.Column<int>(type: "int", nullable: false),
+                    SkolaID = table.Column<int>(type: "int", nullable: false),
                     BrojDanaUNedelji = table.Column<int>(type: "int", nullable: false),
-                    SkolaID = table.Column<int>(type: "int", nullable: true)
+                    NastavnikID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Aktivnost", x => x.ID);
                     table.ForeignKey(
+                        name: "FK_Aktivnost_Nastavnik_NastavnikID",
+                        column: x => x.NastavnikID,
+                        principalTable: "Nastavnik",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Aktivnost_Skola_SkolaID",
                         column: x => x.SkolaID,
                         principalTable: "Skola",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Nastavnik",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Ime = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    Prezime = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    Iskustvo = table.Column<int>(type: "int", nullable: false),
-                    AktivnostID = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Nastavnik", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_Nastavnik_Aktivnost_AktivnostID",
-                        column: x => x.AktivnostID,
-                        principalTable: "Aktivnost",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -108,15 +108,14 @@ namespace SkolaVanNastavnihAktivnostiV2.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Aktivnost_NastavnikID",
+                table: "Aktivnost",
+                column: "NastavnikID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Aktivnost_SkolaID",
                 table: "Aktivnost",
                 column: "SkolaID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Nastavnik_AktivnostID",
-                table: "Nastavnik",
-                column: "AktivnostID",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Pohadja_AktivnostID",
@@ -132,9 +131,6 @@ namespace SkolaVanNastavnihAktivnostiV2.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Nastavnik");
-
-            migrationBuilder.DropTable(
                 name: "Pohadja");
 
             migrationBuilder.DropTable(
@@ -142,6 +138,9 @@ namespace SkolaVanNastavnihAktivnostiV2.Migrations
 
             migrationBuilder.DropTable(
                 name: "Ucenik");
+
+            migrationBuilder.DropTable(
+                name: "Nastavnik");
 
             migrationBuilder.DropTable(
                 name: "Skola");

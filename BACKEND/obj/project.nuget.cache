@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "LugBMUjg6lIX4bt7uY9kV2jdkBQgTjdhGNQxh3FvQySwGzlY/f2I5N40M2QDEkbn4iXyjoNd5RwtjQdqYkvECw==",
+  "dgSpecHash": "Ou3kJQBOLsarzBxez8rKFHrV+1n3JP4qhpd9QUI4HvxH1Cvp7nMuZ6EzNZp5/pg8Mp+5Y+bQWAXX391scLzFXg==",
   "success": true,
-  "projectFilePath": "D:\\Fakultet\\3\\Projekti\\Web\\SkolaVanNastavnihAktivnostiV2\\SkolaVanNastavnihAktivnostiV2.csproj",
+  "projectFilePath": "D:\\Fakultet\\3\\Projekti\\Web\\SkoleVNA-Web-Projekat\\BACKEND\\SkolaVanNastavnihAktivnosti.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Lenovo\\.nuget\\packages\\castle.core\\4.4.1\\castle.core.4.4.1.nupkg.sha512",
     "C:\\Users\\Lenovo\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
