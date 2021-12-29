@@ -21,16 +21,14 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         }
 
         ///<summary>
-        /// Preuzima sve ucenike 
+        /// Preuzima sve ucenike sa svim aktivnostima
         ///</summary>
         [Route("PreuzmiUcenike")]
         [HttpGet]
         public async Task<ActionResult> PreuzmiUcenike()
         {
-            try
-            {
-
-                var ucenici = Context.Ucenici.Select(p => new { p.Ime, p.Prezime, p.ImeRoditelja, p.BrojTelefonaRoditelja/**/, p.ID /**/});
+            try{
+                var ucenici = Context.Ucenici.Select(p => new { p.Ime, p.Prezime, p.ImeRoditelja, p.BrojTelefonaRoditelja, p.ID, p.ListaAktivnosti});
 
                 return Ok(await ucenici.ToListAsync());
             }
@@ -48,7 +46,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         /// <param name="ImeRoditelja"> Ime roditelja ucenika kog zelimo da dodamo.</param>
         /// <param name="BrTelRod"> Broj telefona roditelja ucenika kog zelimo da dodamo.</param>
         [EnableCors("CORS")]
-        [Route("DodajUcenika/{ime}/{prezime}/{imeRoditelja}/{brTelRod}")]
+        [Route("DodajUcenika/{Ime}/{Prezime}/{ImeRoditelja}/{BrTelRod}")]
         [HttpPost]
         public async Task<ActionResult> DodajUcenika(string Ime, string Prezime, string ImeRoditelja, string BrTelRod)
         {
@@ -63,7 +61,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
 
             if (string.IsNullOrWhiteSpace(BrTelRod) || BrTelRod.Length > 30)
                 return BadRequest($"Parametar 'Broj telefona roditelja ucenika' : {BrTelRod} nije moguc!");
-
+            Console.WriteLine(Ime + " " + Prezime);
             Ucenik ucenik = new Ucenik();
             ucenik.Ime = Ime;
             ucenik.Prezime = Prezime;
@@ -76,7 +74,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 Context.Ucenici.Add(ucenik);
                 await Context.SaveChangesAsync();
 
-                return Ok($"Ucenik dodat : {Ime} {Prezime} {ImeRoditelja} {BrTelRod} {ucenik.ID}");
+                return Ok($"Ucenik dodat : {ucenik.Ime} {ucenik.Prezime} {ucenik.ImeRoditelja} {ucenik.BrojTelefonaRoditelja} {ucenik.ID}");
             }
             catch (Exception e)
             {

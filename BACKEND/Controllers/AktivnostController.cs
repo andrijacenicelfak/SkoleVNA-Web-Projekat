@@ -11,33 +11,34 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
 
     [ApiController]
     [Route("[controller]")]
-    public class AktivnostCotroller : ControllerBase
+    public class AktivnostController : ControllerBase
     {
         public SkolaContext Context { get; set; }
 
-        public AktivnostCotroller(SkolaContext context)
+        public AktivnostController(SkolaContext context)
         {
             Context = context;
         }
 
-        [Route("DodajAktivnost/{Naziv}/{Cena}/{NazivSkole}/{BrojDana}/{IDNastavnika}")]
+        [Route("DodajAktivnost/{Naziv}/{Cena}/{IdSkole}/{BrojDana}/{IDNastavnika}")]
         [HttpPost]
-        public async Task<ActionResult> DodajAktivnost(string Naziv, int Cena, string NazivSkole, int BrojDana, int IDNastavnika)
+        public async Task<ActionResult> DodajAktivnost(string Naziv, int Cena, int IdSkole, int BrojDana, int IDNastavnika)
         {
             try
             {
-                var nastavnik = await Context.Nastavnici.Where(p => p.ID == IDNastavnika).FirstAsync();
-                var skola = await Context.Skole.Where(p => p.Naziv.Equals(NazivSkole)).FirstAsync();
-                int IdSkole = skola.ID;
+                var nastavnik = await Context.Nastavnici.Where(p => p.ID == IDNastavnika).FirstOrDefaultAsync();
+                var skola = await Context.Skole.Where(p => p.ID == IdSkole).FirstOrDefaultAsync();
+
 
                 Aktivnost akt = new Aktivnost();
                 akt.Naziv = Naziv;
                 akt.BrojDanaUNedelji = BrojDana;
                 akt.Cena = Cena;
                 akt.Nastavnik = nastavnik;
+                akt.Skola = skola;
 
-                skola.Aktivnosti.Add(akt);
                 Context.Aktivnosti.Add(akt);
+                skola.Aktivnosti.Add(akt);
 
                 await Context.SaveChangesAsync();
 
@@ -62,7 +63,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
 
                 await Context.SaveChangesAsync();
 
-                return Ok($"Obrisina skola sa ID : {ID}");
+                return Ok($"Obrisina skola sa ID : ${ID}");
             }
             catch (Exception e)
             {
@@ -77,9 +78,26 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         {
             try
             {
-                var akt = Context.Aktivnosti.Select(p => new { p.Naziv, p.BrojDanaUNedelji, p.Cena });
+                var akt = Context.Aktivnosti.Select(p => new { p.Naziv, p.BrojDanaUNedelji, p.Cena, p.ID });
 
                 return Ok(await akt.ToListAsync());
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+        //TREBA MI =>
+        [Route("PreuzmiAktivnostiZaSkolu/{SkolaID}")]
+        [HttpGet]
+
+        public async Task<ActionResult> PreuzmiAktivnostiZaSkolu(int SkolaID)
+        {
+            try
+            {
+                var akt = Context.Aktivnosti.Where(p=> p.Skola.ID == SkolaID).Select(p => new { p.Naziv, p.BrojDanaUNedelji, p.Cena, p.ID, nastavnikID = p.Nastavnik.ID});
+
+                return Ok(await akt.FirstOrDefaultAsync());
             }
             catch (Exception e)
             {

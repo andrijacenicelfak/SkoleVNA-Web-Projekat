@@ -1,0 +1,25 @@
+
+.stranica{
+    display:  flex;
+    flex-direction: column;
+    outline-style: solid;
+    outline-width: 1px;
+    outline-color: black;
+    align-self: center;
+    padding-left: 10%;
+    padding-right: 10%;
+}
+.gornjiBar{
+    outline-style: solid;
+    outline-width: 1px;
+    outline-color: blue;
+    align-self: center;
+}
+.sredina{
+    display: flex;
+    flex-direction: row;
+    outline-style: solid;
+    outline-width: 1px;
+    outline-color: red;
+    align-self: left;
+}

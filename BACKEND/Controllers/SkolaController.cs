@@ -26,7 +26,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         {
             try
             {
-                var skole = Context.Skole.Select(p => new { p.Naziv, p.Tip });
+                var skole = Context.Skole.Select(p => new { p.Naziv, p.Tip, p.ID });
 
                 return Ok(await skole.ToListAsync());
             }
