@@ -1,8 +1,15 @@
 import { Ucenik } from "./Ucenik.js";
 import { Skola } from "./Skola.js";
 import { Aktivnost } from "./Aktivnost.js";
+var i = 1;
 
 kreirajStranicu();
+
+function removeAllChildNodes(parent) {
+    while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+    }
+}
 
 function kreirajStranicu() {
     var stranica = document.createElement("div");
@@ -23,26 +30,48 @@ function kreirajStranicu() {
     var navigacija = document.createElement("div");
     navigacija.className = "navigacija";
     sredina.appendChild(navigacija);
-    kreairajNavigaciju(navigacija);
 
     var sadrzaj = document.createElement("div");
     sadrzaj.className = "sadrzaj";
     sredina.appendChild(sadrzaj);
+    kreairajNavigaciju(navigacija);
 
     var donjiBar = document.createElement("div");
     donjiBar.className = "donjiBar";
     stranica.appendChild(donjiBar);
 }
-function kreairajNavigaciju(parent) {
-    var div1 = document.createElement("div");
-    div1.className = "navigacijaDugme";
-    parent.appendChild(div1);
+function kreairajNavigaciju(nav) {
+    var uceniciDiv = document.createElement("div");
+    uceniciDiv.className = "navigacijaDugme";
+    nav.appendChild(uceniciDiv);
 
-    var l1 = document.createElement("label");
-    l1.innerHTML = "Ucenici";
-    div1.appendChild(l1);
+    var uceniciDugme = document.createElement("button");
+    uceniciDugme.innerHTML = "Ucenici";
+    uceniciDugme.className = "btnNavigacija";
+    uceniciDugme.onclick = prikazZaUcenike;
+    uceniciDiv.appendChild(uceniciDugme);
 
+    var aktDiv = document.createElement("div");
+    aktDiv.className = "navigacijaDugme";
+    nav.appendChild(aktDiv);
+
+    var aktivnostDugme = document.createElement("button");
+    aktivnostDugme.innerHTML = "Aktivnosti";
+    aktivnostDugme.className = "btnNavigacija";
+    aktivnostDugme.onclick = prikazZaAktivnosti;
+    aktDiv.appendChild(aktivnostDugme);
 }
+
+function prikazZaUcenike() {
+    var sadrzaj = document.getElementsByClassName("sadrzaj").item(0);
+    removeAllChildNodes(sadrzaj);
+
+    console.log("UCENICI");
+}
+function prikazZaAktivnosti() {
+    console.log("AKTIVNOSTI")
+}
+
 
 /*
 fetch("https://localhost:5001/Ucenik/PreuzmiUcenike").then(p =>
