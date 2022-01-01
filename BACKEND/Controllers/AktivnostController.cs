@@ -19,7 +19,30 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         {
             Context = context;
         }
+        //OVO MI JE POTREBNO
+        [Route("VratiAktivnostiZaSkolu/{SkolaID}")]
+        [HttpGet]
+        public async Task<ActionResult> VratiAktivnostiZaSkolu(int SkolaID)
+        {
+            try
+            {
+                return Ok(await Context.Aktivnosti.Where(p => p.Skola.ID == SkolaID).Select(p => new
+                {
+                    aktivnostID = p.ID,
+                    aktivnostNaziv = p.Naziv,
+                    aktivnostCena = p.Cena,
+                    nastavnikID = p.Nastavnik.ID,
+                    aktivnostBrojDana = p.BrojDanaUNedelji
+                }).ToListAsync());
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
 
+
+        /*
         [Route("DodajAktivnost/{Naziv}/{Cena}/{IdSkole}/{BrojDana}/{IDNastavnika}")]
         [HttpPost]
         public async Task<ActionResult> DodajAktivnost(string Naziv, int Cena, int IdSkole, int BrojDana, int IDNastavnika)
@@ -78,7 +101,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         {
             try
             {
-                var akt = Context.Aktivnosti.Select(p => new { p.Naziv, p.BrojDanaUNedelji, p.Cena, p.ID });
+                var akt = Context.Aktivnosti.Select(p => new { p.Naziv, p.BrojDanaUNedelji, p.Cena, p.ID, skolaID = p.Skola.ID });
 
                 return Ok(await akt.ToListAsync());
             }
@@ -86,23 +109,6 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
             {
                 return BadRequest(e.Message);
             }
-        }
-        //TREBA MI =>
-        [Route("PreuzmiAktivnostiZaSkolu/{SkolaID}")]
-        [HttpGet]
-
-        public async Task<ActionResult> PreuzmiAktivnostiZaSkolu(int SkolaID)
-        {
-            try
-            {
-                var akt = Context.Aktivnosti.Where(p=> p.Skola.ID == SkolaID).Select(p => new { p.Naziv, p.BrojDanaUNedelji, p.Cena, p.ID, nastavnikID = p.Nastavnik.ID});
-
-                return Ok(await akt.FirstOrDefaultAsync());
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
+        }*/
     }
 }

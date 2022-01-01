@@ -35,6 +35,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 return BadRequest(e.Message);
             }
         }
+        /*
         [EnableCors("CORS")]
         [Route("DodajSkolu")]
         [HttpPost]
@@ -154,6 +155,6 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
             {
                 return BadRequest(e.Message);
             }
-        }
+        }*/
     }
 }

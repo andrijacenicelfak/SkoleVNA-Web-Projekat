@@ -19,6 +19,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         {
             Context = context;
         }
+        /*
 
         [HttpGet]
         [Route("/VratiNastavnike")]
@@ -49,6 +50,6 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
             }catch(Exception e){
                 return BadRequest(e.Message);
             }
-        }
+        }*/
     }
 }

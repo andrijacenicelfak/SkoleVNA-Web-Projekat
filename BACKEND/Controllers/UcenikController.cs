@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using System.Collections.Generic;
 
 namespace SkolaVanNastavnihAktivnosti.Controllers
 {
@@ -19,7 +20,31 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         {
             Context = context;
         }
+        [Route("PreuzmiUcenikeUpisaneNaAktivnost/{AktivnostID}")]
+        [HttpGet]
+        public async Task<ActionResult> PreuzmiUcenikeUpisaneNaAktivnost(int AktivnostID)
+        {
+            try
+            {
+                var nesto = Context.PohadjaAktivnost.Include(p => p.Aktivnost).Where(a => a.Aktivnost.ID == AktivnostID).Include(p => p.Ucenik).Select(p => new
+                {
+                    ime = p.Ucenik.Ime,
+                    prezime = p.Ucenik.Prezime,
+                    brojTelefonaRoditelja = p.Ucenik.BrojTelefonaRoditelja,
+                    ucenikID = p.Ucenik.ID,
+                    imeRoditelja = p.Ucenik.ImeRoditelja,
+                    poslednjiDatumPlacanje = p.PoslednjePlacanje.ToShortDateString()
+                });
 
+                return Ok(await nesto.ToListAsync());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return BadRequest(e.Message);
+            }
+        }
+        /*
         ///<summary>
         /// Preuzima sve ucenike sa svim aktivnostima
         ///</summary>
@@ -27,8 +52,9 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         [HttpGet]
         public async Task<ActionResult> PreuzmiUcenike()
         {
-            try{
-                var ucenici = Context.Ucenici.Select(p => new { p.Ime, p.Prezime, p.ImeRoditelja, p.BrojTelefonaRoditelja, p.ID, p.ListaAktivnosti});
+            try
+            {
+                var ucenici = Context.Ucenici;
 
                 return Ok(await ucenici.ToListAsync());
             }
@@ -81,7 +107,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 return BadRequest(e.Message);
             }
         }
-        /* Malo nebitna funckija, ako se na kraju odlucim izbrisacu! TODO*/
+        // Malo nebitna funckija, ako se na kraju odlucim izbrisacu! TODO
         ///<summary> Izmeni informacije o roditelju nekog ucenika. </summary>
         /// <param name="StariBrojTelRoditelja"> Stari broj telefona roditelja ucenika.</param>
         /// <param name="NoviBrojTelRoditelja"> Novi broj telefona roditelja ucenika.</param>
@@ -188,6 +214,6 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
             {
                 return BadRequest(e.Message);
             }
-        }
+        }*/
     }
 }

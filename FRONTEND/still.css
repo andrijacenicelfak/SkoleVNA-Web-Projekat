@@ -2,25 +2,39 @@
 .stranica{
     display:  flex;
     flex-direction: column;
-    outline-style: solid;
+    /*outline-style: solid;
     outline-width: 1px;
-    outline-color: black;
+    outline-color: black;*/
     align-self: center;
 }
 .gornjiBar{
-    outline-style: solid;
+    /*outline-style: solid;
     outline-width: 1px;
-    outline-color: blue;
+    outline-color: blue;*/
     align-self: center;
     width : 100%;
 }
+
 .sredina{
+    display: flex;
+    flex-direction: row;
+    
+    align-self: left;
+}
+.sadrzaj{
     display: flex;
     flex-direction: row;
     outline-style: solid;
     outline-width: 1px;
     outline-color: red;
-    align-self: left;
+}
+.btnKontrola{
+    align-self: flex-end;
+}
+.red{
+    justify-content:right;
+    display: flex;
+    flex-direction: row;
 }
 .navigacija{
     display: flex;
@@ -29,27 +43,16 @@
     outline-style: solid;
     outline-width: 1px;
     outline-color: rgb(201, 148, 2);
-    align-self: left;
-}
-.navigacijaDugme{
-    width : 100%;
-}
-.btnNavigacija{
-    width : 95%;
-    height: 45px;
-    padding-right: 5%;
 }
 
-.btnNavigacija {
-  backface-visibility: hidden;
-  background: #81e0e7;
-  color: #fff;
-  cursor: pointer;
-  font-size: 1.6vw;
-  line-height: 1.3;
-  text-align: center;
-  transition: transform .2s;
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
 }
-.btnNavigacija:hover {
-  transform: translateX(5%);
+th, td {
+    padding: 7px;
+}
+.selektovanRed{
+    background-color: lightblue;
+    color:brown;
 }
