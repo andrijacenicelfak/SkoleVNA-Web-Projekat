@@ -19,32 +19,41 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         {
             Context = context;
         }
-        /*
+
+        [Route("PreuzmiUcenikeUpisaneNaAktivnost/{AktivnostID}")]
         [HttpGet]
-        [Route("/VratiUpisaneAktivnosti")]
-        public async Task<ActionResult> VratiPohadja()
+        public async Task<ActionResult> PreuzmiUcenikeUpisaneNaAktivnost(int AktivnostID)
         {
             try
             {
+                var nesto = Context.PohadjaAktivnost.Include(p => p.Aktivnost).Where(a => a.Aktivnost.ID == AktivnostID).Include(p => p.Ucenik).Select(p => new
+                {
+                    ime = p.Ucenik.Ime,
+                    prezime = p.Ucenik.Prezime,
+                    brojTelefonaRoditelja = p.Ucenik.BrojTelefonaRoditelja,
+                    ucenikID = p.Ucenik.ID,
+                    imeRoditelja = p.Ucenik.ImeRoditelja,
+                    poslednjiDatumPlacanje = p.PoslednjePlacanje.ToShortDateString()
+                });
 
-                var pohajda = await Context.PohadjaAktivnost.Select(p => new { ucenikID = p.Ucenik.ID, aktivnostID = p.Aktivnost.ID, datumPlacanje = p.PoslednjePlacanje.ToShortDateString() }).ToListAsync();
-
-                return Ok(pohajda);
+                return Ok(await nesto.ToListAsync());
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 return BadRequest(e.Message);
             }
         }
-        */
         [HttpPost]
         [Route("/UpisiUcenika/{UcenikID}/{AktivnostID}")]
-        public async Task<ActionResult> DodajNastavnika(int UcenikID, int AktivnostID)
+        public async Task<ActionResult> UpisiUcenika(int UcenikID, int AktivnostID)
         {
             try
             {
                 var ucenik = await Context.Ucenici.Where(p => p.ID == UcenikID).FirstOrDefaultAsync();
                 var aktivnost = await Context.Aktivnosti.Where(p => p.ID == AktivnostID).FirstOrDefaultAsync();
+                if (ucenik == null || aktivnost == null)
+                    throw new Exception("Nema takvih ucenika i/ili aktivnosti!");
                 Pohadja p = new Pohadja();
                 p.Ucenik = ucenik;
                 p.Aktivnost = aktivnost;
@@ -57,32 +66,60 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
             {
                 return BadRequest(e.Message);
             }
-        }/*
-        //TREBA MI OVO
-        [HttpGet]
-        [Route("/PretraziUcenikaSaSvimAktivnostima/{Ime}/{Prezime}/{BrojTelefonaRoditelja}")]
+        }
 
-        public async Task<ActionResult> PretraziUcenikaSaSvimAktivnostima(string Ime, string Prezime, string BrojTelefonaRoditelja)
+        [HttpPut]
+        [Route("Uplati/{UcenikID}/{AktivnostID}")]
+        public async Task<ActionResult> Uplati(int UcenikID, int AktivnostID)
         {
             try
             {
-                int ucenikID = await Context.Ucenici.Where(p => p.Ime == Ime && p.Prezime == p.Prezime && p.BrojTelefonaRoditelja == BrojTelefonaRoditelja).Select(p => p.ID).FirstOrDefaultAsync();
-                var nesto = Context.PohadjaAktivnost.Where(p => p.Ucenik.ID == ucenikID).Select(p => new
-                {
-                    aktivnostID = p.Aktivnost.ID,
-                    ime = p.Ucenik.Ime,
-                    prezime = p.Ucenik.Prezime,
-                    id = ucenikID,
-                    BrojTelefonaRoditelja = p.Ucenik.BrojTelefonaRoditelja,
-                    imeRoditelja = p.Ucenik.ImeRoditelja
-                });
-
-                return Ok(await nesto.ToListAsync());
+                var poh = await Context.PohadjaAktivnost.Where(p => p.Aktivnost.ID == AktivnostID && p.Ucenik.ID == UcenikID).FirstOrDefaultAsync();
+                if (poh == null)
+                    throw new Exception("Greska, nema takve aktivnosti ili ucenika!");
+                poh.PoslednjePlacanje = DateTime.Today;
+                await Context.SaveChangesAsync();
+                return Ok("Postavljen novi datum placanja!");
             }
             catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
-        }*/
+        }
+
+        [HttpGet]
+        [Route("VratiUcenikeKojiNisuUpisani")]
+        public async Task<ActionResult> VratiUcenikeKojiNisuUpisani()
+        {
+            try
+            {
+                var ucenici = await Context.Ucenici.Where(p => p.ListaAktivnosti.Count == 0).ToListAsync();
+                return Ok(ucenici);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpDelete]
+        [Route("IspisiUcenikaOdAktivnosti/{UcenikID}/{AktivnostID}")]
+        public async Task<ActionResult> IspisiUcenikaOdAktivnosti(int UcenikID, int AktivnostID)
+        {
+            try
+            {
+                var poh = await Context.PohadjaAktivnost.Where(p => p.Aktivnost.ID == AktivnostID && p.Ucenik.ID == UcenikID).FirstOrDefaultAsync();
+                if (poh == null)
+                    throw new Exception("Greska, nema takve aktivnosti ili ucenika!");
+                Context.Remove(poh);
+                await Context.SaveChangesAsync();
+                return Ok("Postavljen novi datum placanja!");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
     }
 }

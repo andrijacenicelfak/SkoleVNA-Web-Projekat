@@ -1,8 +1,11 @@
+body{
+    display: flex;
+    flex-direction: column;
 
+}
 .stranica{
     display:  flex;
     flex-direction: column;
-    align-self: center;
     font-size: 0.9w;
 }
 .gornjiBar{
@@ -49,6 +52,32 @@ th, td {
     padding: 7px;
 }
 .selektovanRed{
-    background-color: rgb(30, 80, 97);
+    background-color: rgb(40, 104, 126);
     color:rgb(255, 255, 255);
+}
+.redUTabeli{
+    transition: 0.2s;
+}
+.redUTabeli:hover{
+    background-color: rgb(107, 171, 192);
+}
+.info{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-left: 10px;
+    /*width: 4vw;*/
+}
+.divInfoNaslov{
+    align-self: center;
+}
+.divInfo{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.lblInfoNaslov{
+    font-size: 110%;
+    background-color: rgb(92, 174, 199);
+    color: rgb(255, 255, 255);
 }

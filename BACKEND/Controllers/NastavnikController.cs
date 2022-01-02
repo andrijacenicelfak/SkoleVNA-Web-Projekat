@@ -19,8 +19,27 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         {
             Context = context;
         }
-        /*
+        [HttpGet]
+        [Route("VratiNastavnika/{NastavnikID}")]
 
+        public async Task<ActionResult> VratiNastavnika(int NastavnikID)
+        {
+            try
+            {
+                return Ok(await Context.Nastavnici.Where(p => p.ID == NastavnikID).Select(n => new
+                {
+                    n.ID,
+                    n.Ime,
+                    n.Prezime,
+                    n.Iskustvo
+                }).FirstOrDefaultAsync());
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+        /*
         [HttpGet]
         [Route("/VratiNastavnike")]
         public async Task<ActionResult> VratiNastavnike(){
@@ -33,7 +52,8 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 return BadRequest(e.Message);
             }
         }
-
+        */
+        /*
         [HttpPost]
         [Route("/DodajNastavnika/{Ime}/{Prezime}/{Iskustvo}")]
         public async Task<ActionResult> DodajNastavnika(string Ime, string Prezime, int Iskustvo){

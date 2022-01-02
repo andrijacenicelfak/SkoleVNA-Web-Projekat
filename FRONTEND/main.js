@@ -28,6 +28,7 @@ function kreirajStranicu() {
 
     let divSelectSkole = document.createElement("div");
     gornjiBar.appendChild(divSelectSkole);
+
     let lblSkole = document.createElement("label");
     lblSkole.innerHTML = "Skole "
     lblSkole.classList += "lblKontrola";

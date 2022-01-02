@@ -20,30 +20,6 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         {
             Context = context;
         }
-        [Route("PreuzmiUcenikeUpisaneNaAktivnost/{AktivnostID}")]
-        [HttpGet]
-        public async Task<ActionResult> PreuzmiUcenikeUpisaneNaAktivnost(int AktivnostID)
-        {
-            try
-            {
-                var nesto = Context.PohadjaAktivnost.Include(p => p.Aktivnost).Where(a => a.Aktivnost.ID == AktivnostID).Include(p => p.Ucenik).Select(p => new
-                {
-                    ime = p.Ucenik.Ime,
-                    prezime = p.Ucenik.Prezime,
-                    brojTelefonaRoditelja = p.Ucenik.BrojTelefonaRoditelja,
-                    ucenikID = p.Ucenik.ID,
-                    imeRoditelja = p.Ucenik.ImeRoditelja,
-                    poslednjiDatumPlacanje = p.PoslednjePlacanje.ToShortDateString()
-                });
-
-                return Ok(await nesto.ToListAsync());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return BadRequest(e.Message);
-            }
-        }
         /*
         ///<summary>
         /// Preuzima sve ucenike sa svim aktivnostima
@@ -63,7 +39,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 return BadRequest(e.Message);
             }
         }
-
+*/
         ///<summary>
         /// Dodaje ucenika u bazu
         ///</summary>
@@ -106,7 +82,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
             {
                 return BadRequest(e.Message);
             }
-        }
+        }/*
         // Malo nebitna funckija, ako se na kraju odlucim izbrisacu! TODO
         ///<summary> Izmeni informacije o roditelju nekog ucenika. </summary>
         /// <param name="StariBrojTelRoditelja"> Stari broj telefona roditelja ucenika.</param>
