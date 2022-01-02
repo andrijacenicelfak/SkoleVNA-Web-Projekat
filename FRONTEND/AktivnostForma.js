@@ -19,6 +19,8 @@ export class AktivnostForma {
             aktivnost.value = akt.ID;
             selectAktivnost.appendChild(aktivnost);
         });
+        this.nadjiUcenikeUpisaneNaAktivnost(selectAktivnost.options[selectAktivnost.selectedIndex].value);
+
     }
 
     pribaviAktivnosti() {
@@ -95,17 +97,6 @@ export class AktivnostForma {
             let dtm = document.createElement("td");
             dtm.innerHTML = ucenik.datumPoslednjegPlacanja;
             red.appendChild(dtm);
-            /*
-            //Radio button za selekciju
-
-            let selekcija = document.createElement("td");
-            red.appendChild(selekcija);
-
-            let rdb = document.createElement("input");
-            rdb.type = "radio";
-            rdb.name = "slekcijaUc";
-            rdb.value = ucenik.ID;
-            selekcija.appendChild(rdb);*/
         });
     }
     dodajKontrolu(kontrola) {
@@ -120,19 +111,14 @@ export class AktivnostForma {
 
         let selectAktivnosti = document.createElement("select");
         selectAktivnosti.classList += "selectAktivnost";
+        selectAktivnosti.onchange = (ev) => {
+            this.nadjiUcenikeUpisaneNaAktivnost(selectAktivnosti.options[selectAktivnosti.selectedIndex].value);
+        }
         aktivnostSelectDiv.appendChild(selectAktivnosti);
 
         let btnPretraziDiv = document.createElement("div");
         btnPretraziDiv.className = "divUKontrola";
         kontrola.appendChild(btnPretraziDiv);
-
-        let btnPretrazi = document.createElement("button");
-        btnPretrazi.classList += "btnSadrzaj";
-        btnPretrazi.innerHTML = "Pretrazi ucenike";
-        btnPretrazi.onclick = (ev) => {
-            this.nadjiUcenikeUpisaneNaAktivnost(selectAktivnosti.options[selectAktivnosti.selectedIndex].value);
-        }
-        btnPretraziDiv.appendChild(btnPretrazi);
 
         /*
         //Dugme za testiranje
@@ -180,11 +166,6 @@ export class AktivnostForma {
         el = document.createElement("th");
         el.innerHTML = "Datum Poslednje Uplate"
         red.appendChild(el);
-        /*
-        //Selekcija
-        el = document.createElement("th");
-        el.innerHTML = "Selekcija";
-        red.appendChild(el);*/
     }
     dodajTabelu(divTabela) {
         let tabela = document.createElement("table");
