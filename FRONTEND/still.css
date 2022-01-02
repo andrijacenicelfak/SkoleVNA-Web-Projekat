@@ -2,15 +2,13 @@
 .stranica{
     display:  flex;
     flex-direction: column;
-    /*outline-style: solid;
-    outline-width: 1px;
-    outline-color: black;*/
     align-self: center;
+    font-size: 0.9w;
 }
 .gornjiBar{
-    /*outline-style: solid;
-    outline-width: 1px;
-    outline-color: blue;*/
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-self: center;
     width : 100%;
 }
@@ -18,15 +16,16 @@
 .sredina{
     display: flex;
     flex-direction: row;
-    
+    flex-wrap: wrap;
     align-self: left;
+}
+table{
+    size: auto;
 }
 .sadrzaj{
     display: flex;
     flex-direction: row;
-    outline-style: solid;
-    outline-width: 1px;
-    outline-color: red;
+    flex-wrap: wrap;
 }
 .btnKontrola{
     align-self: flex-end;
@@ -40,9 +39,6 @@
     display: flex;
     width: 15%;
     flex-direction: column;
-    outline-style: solid;
-    outline-width: 1px;
-    outline-color: rgb(201, 148, 2);
 }
 
 table, th, td {
@@ -53,6 +49,6 @@ th, td {
     padding: 7px;
 }
 .selektovanRed{
-    background-color: lightblue;
-    color:brown;
+    background-color: rgb(30, 80, 97);
+    color:rgb(255, 255, 255);
 }

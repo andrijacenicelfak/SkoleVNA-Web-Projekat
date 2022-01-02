@@ -56,17 +56,24 @@ export class AktivnostForma {
     updateListuUcenika() {
         let tabelaUcenika = document.getElementsByClassName("tabela").item(0);
         removeAllChildNodes(tabelaUcenika);
+
+        //Brise se sve iza tabele, cak i zaglavlja pa moramo da ponovo dodamo
         this.dodajZaglavljaTabeli(tabelaUcenika);
+
         this.listaUcenika.forEach((ucenik) => {
             var red = document.createElement("tr");
             red.className = "redUTabeli";
+
             red.value = ucenik.ID;
+
+            //Za selekciju, da vidmo ko je red selektovan
             red.addEventListener("click", () => {
                 tabelaUcenika.childNodes.forEach(p => {
                     p.className = "redUTabeli";
                 });
                 red.classList += " selektovanRed";
             });
+
             tabelaUcenika.appendChild(red);
             //Ime
 

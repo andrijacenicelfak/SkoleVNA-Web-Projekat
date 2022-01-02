@@ -19,9 +19,26 @@ function kreirajStranicu() {
     let gornjiBar = document.createElement("div");
     gornjiBar.className = "gornjiBar";
     stranica.appendChild(gornjiBar);
+    let naslovDiv = document.createElement("div");
+
     let naslov = document.createElement("label");
     naslov.innerHTML = "Skole van nastavnih aktivnosti";
-    gornjiBar.appendChild(naslov);
+    naslovDiv.appendChild(naslov);
+    gornjiBar.appendChild(naslovDiv);
+
+    let divSelectSkole = document.createElement("div");
+    gornjiBar.appendChild(divSelectSkole);
+    let lblSkole = document.createElement("label");
+    lblSkole.innerHTML = "Skole "
+    lblSkole.classList += "lblKontrola";
+    divSelectSkole.appendChild(lblSkole);
+
+    let selectSkole = document.createElement("select");
+    selectSkole.classList += "selectKontrola";
+    selectSkole.onchange = (ev) => {
+        prikazZaAktivnosti();
+    }
+    divSelectSkole.appendChild(selectSkole);
 
     let sredina = document.createElement("div");
     sredina.className = "sredina";
@@ -45,17 +62,6 @@ function kreairajNavigaciju(nav) {
     skoleSelectDiv.className = "skoleSelectDiv";
     nav.appendChild(skoleSelectDiv);
 
-    let lblSkole = document.createElement("label");
-    lblSkole.innerHTML = "Skole "
-    lblSkole.classList += "lblKontrola";
-    skoleSelectDiv.appendChild(lblSkole);
-
-    let selectSkole = document.createElement("select");
-    selectSkole.classList += "selectKontrola";
-    selectSkole.onchange = (ev) => {
-        prikazZaAktivnosti();
-    }
-    skoleSelectDiv.appendChild(selectSkole);
 
     let aktDiv = document.createElement("div");
     aktDiv.className = "navigacijaDugme";
