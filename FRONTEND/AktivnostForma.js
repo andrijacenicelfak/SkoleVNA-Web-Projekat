@@ -41,7 +41,7 @@ export class AktivnostForma {
                 });
                 this.listaAktivnosti.push(new Aktivnost(-1, "Nije upisan", 0, -1, 0));
                 this.updateListuAktivnosti();
-                //this.updateInfo();
+                this.updateInfo();
 
                 if (this.listaAktivnosti.length > 1) {
                     let btnUpisi = document.getElementById("btnUplati");
@@ -178,7 +178,7 @@ export class AktivnostForma {
                 btnUplati.disabled = false;
                 btnIspisi.disabled = false;
             }
-            //this.updateInfo();
+            this.updateInfo(aktivnostID);
             this.nadjiUcenikeUpisaneNaAktivnost(aktivnostID);
         }
         aktivnostSelectDiv.appendChild(selectAktivnosti);
@@ -264,27 +264,17 @@ export class AktivnostForma {
 
     }
 
-    /*updateInfo() {
+    updateInfo() {
         let selectAktivnost = document.getElementsByClassName("selectAktivnost").item(0);
         let index = selectAktivnost.selectedIndex;
         let aktivnost = this.listaAktivnosti[index];
-        console.log(aktivnost);
-        console.log(aktivnost.ID);
 
-        if (aktivnost.ID == -1) {
+        if (aktivnost.ID === -1) {
             this.nastavnik.ID = -1;
             this.nastavnik.Ime = "/";
             this.nastavnik.Prezime = "/";
             this.nastavnik.Iskustvo = 0;
-
-            let imeNastavnik = document.getElementById("imeNastavnik");
-            imeNastavnik.innerHTML = this.nastavnik.Ime;
-
-            let prezimeNastavnik = document.getElementById("prezimeNastavnik");
-            prezimeNastavnik.innerHTML = this.nastavnik.Prezime;
-
-            let iskustvoNastavnik = document.getElementById("iskustvoNastavnik");
-            iskustvoNastavnik.innerHTML = this.nastavnik.Iskustvo + "   ";
+            this.dodajInfo();
         } else {
             fetch("https://localhost:5001/Nastavnik/VratiNastavnika/" + aktivnost.NastavnikID).then(p => {
                 p.json().then(n => {
@@ -292,19 +282,16 @@ export class AktivnostForma {
                     this.nastavnik.Ime = n.ime;
                     this.nastavnik.Prezime = n.prezime;
                     this.nastavnik.Iskustvo = n.iskustvo;
+                    this.dodajInfo();
                 });
-                let imeNastavnik = document.getElementById("imeNastavnik");
-                imeNastavnik.innerHTML = this.nastavnik.Ime;
 
-                let prezimeNastavnik = document.getElementById("prezimeNastavnik");
-                prezimeNastavnik.innerHTML = this.nastavnik.Prezime;
-
-                let iskustvoNastavnik = document.getElementById("iskustvoNastavnik");
-                iskustvoNastavnik.innerHTML = this.nastavnik.Iskustvo + "   ";
             });
         }
     }
-    dodajInfo(info) {
+    dodajInfo() {
+        let info = document.getElementById("info");
+        removeAllChildNodes(info);
+
         let naslovDiv = document.createElement("div");
         naslovDiv.className = "divInfoNaslov";
         info.appendChild(naslovDiv);
@@ -325,6 +312,7 @@ export class AktivnostForma {
         let lblNastavnikIme = document.createElement("label");
         lblNastavnikIme.id = "imeNastavnik";
         lblNastavnikIme.className = "lblInfo"
+        lblNastavnikIme.innerHTML = this.nastavnik.Ime;
         imeDiv.appendChild(lblNastavnikIme);
 
         let prezimeDiv = document.createElement("div");
@@ -338,6 +326,7 @@ export class AktivnostForma {
         let lblNastavnikPrezime = document.createElement("label");
         lblNastavnikPrezime.id = "prezimeNastavnik";
         lblNastavnikPrezime.className = "lblInfo";
+        lblNastavnikPrezime.innerHTML = this.nastavnik.Prezime;
         prezimeDiv.appendChild(lblNastavnikPrezime);
 
         let iskustvoDiv = document.createElement("div");
@@ -352,12 +341,9 @@ export class AktivnostForma {
         let lblNastavnikIskustvo = document.createElement("label");
         lblNastavnikIskustvo.className = "lblInfo";
         lblNastavnikIskustvo.id = "iskustvoNastavnik";
+        lblNastavnikIskustvo.innerHTML = " " + this.nastavnik.Iskustvo / 1000 + "  /10";
         iskustvoDiv.appendChild(lblNastavnikIskustvo);
-        let lblIskustvoM = document.createElement("label");
-        lblIskustvoM.className = "lblInfo";
-        lblIskustvoM.innerHTML = "poena";
-        iskustvoDiv.appendChild(lblIskustvoM);
-    }*/
+    }
 
 
     crtaj(host) {
@@ -376,11 +362,9 @@ export class AktivnostForma {
 
         let info = document.createElement("div");
         info.className = "info";
+        info.id = "info";
         host.appendChild(info);
 
-        //this.dodajInfo(info);
-
         this.pribaviAktivnosti();
-
     }
 }
