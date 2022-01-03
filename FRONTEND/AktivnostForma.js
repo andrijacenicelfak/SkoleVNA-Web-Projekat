@@ -23,7 +23,7 @@ export class AktivnostForma {
             selectAktivnost.appendChild(aktivnost);
         });
         this.nadjiUcenikeUpisaneNaAktivnost(selectAktivnost.options[selectAktivnost.selectedIndex].value);
-
+        this.updateBrojDana();
     }
 
     pribaviAktivnosti() {
@@ -180,8 +180,24 @@ export class AktivnostForma {
             }
             this.updateInfo(aktivnostID);
             this.nadjiUcenikeUpisaneNaAktivnost(aktivnostID);
+            this.updateBrojDana();
         }
         aktivnostSelectDiv.appendChild(selectAktivnosti);
+
+        let aktivnostInfoDiv = document.createElement("div");
+        aktivnostInfoDiv.className = "divKontrola";
+
+        let lblBrDana = document.createElement("label");
+        lblBrDana.className = "lblKontrola";
+        lblBrDana.innerHTML = "Broj dana :";
+        aktivnostInfoDiv.appendChild(lblBrDana);
+
+        let lblBrDanaAkt = document.createElement("label");
+        lblBrDanaAkt.className = "lblKontrola";
+        lblBrDanaAkt.id = "lblBrojDanaAktivnost";
+        aktivnostInfoDiv.appendChild(lblBrDanaAkt);
+
+        kontrola.appendChild(aktivnostInfoDiv);
 
         kontrola.appendChild(btnUplatiDiv);
 
@@ -341,10 +357,17 @@ export class AktivnostForma {
         let lblNastavnikIskustvo = document.createElement("label");
         lblNastavnikIskustvo.className = "lblInfo";
         lblNastavnikIskustvo.id = "iskustvoNastavnik";
-        lblNastavnikIskustvo.innerHTML = " " + this.nastavnik.Iskustvo / 1000 + "  /10";
+        lblNastavnikIskustvo.innerHTML = this.nastavnik.Iskustvo / 1000 + "  /10";
         iskustvoDiv.appendChild(lblNastavnikIskustvo);
     }
 
+    updateBrojDana() {
+        let lblBrDanaAkt = document.getElementById("lblBrojDanaAktivnost");
+        let selectAktivnost = document.getElementsByClassName("selectAktivnost").item(0);
+        let index = selectAktivnost.selectedIndex;
+        let aktivnost = this.listaAktivnosti[index];
+        lblBrDanaAkt.innerHTML = aktivnost.BrojDanaUNedelji;
+    }
 
     crtaj(host) {
 

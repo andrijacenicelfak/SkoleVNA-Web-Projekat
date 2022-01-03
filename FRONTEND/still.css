@@ -60,6 +60,10 @@ th, td {
     padding-left: 4px;
 
 }
+.divKontrola > label.lblKontrola:not(:first-child){
+    padding-left: 4px;
+
+}
 .selektovanRed{
     background-color: rgb(40, 104, 126);
     color:rgb(255, 255, 255);
