@@ -30,8 +30,9 @@ table{
     flex-direction: row;
     flex-wrap: wrap;
 }
-.btnKontrola{
-    align-self: flex-end;
+.btnKontrola, .btnNavigacija{
+    height: max(30px, 4vh);
+    width: max(100%, 3.5vw);
 }
 .red{
     justify-content:right;
@@ -77,7 +78,6 @@ th, td {
 .info{
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     margin-left: 10px;
     /*width: 4vw;*/
 }
@@ -89,4 +89,20 @@ th, td {
 .lblInfoNaslov{
     background-color: rgb(92, 174, 199);
     color: rgb(255, 255, 255);
+    font-size: 120%;
+}
+.kontrola{
+    display: flex;
+    flex-direction: column;
+}
+.divKontrola{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.divKontrola > input.tbxKontrola{
+    height: 3vh;
+}
+.selKontrola{
+    width: max-content;
 }

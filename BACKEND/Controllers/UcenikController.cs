@@ -63,7 +63,6 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
 
             if (string.IsNullOrWhiteSpace(BrTelRod) || BrTelRod.Length > 30)
                 return BadRequest($"Parametar 'Broj telefona roditelja ucenika' : {BrTelRod} nije moguc!");
-            Console.WriteLine(Ime + " " + Prezime);
             Ucenik ucenik = new Ucenik();
             ucenik.Ime = Ime;
             ucenik.Prezime = Prezime;
@@ -82,114 +81,59 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
             {
                 return BadRequest(e.Message);
             }
-        }/*
-        // Malo nebitna funckija, ako se na kraju odlucim izbrisacu! TODO
-        ///<summary> Izmeni informacije o roditelju nekog ucenika. </summary>
-        /// <param name="StariBrojTelRoditelja"> Stari broj telefona roditelja ucenika.</param>
-        /// <param name="NoviBrojTelRoditelja"> Novi broj telefona roditelja ucenika.</param>
-        /// <param name="ImeRoditelja"> Ime roditelja ucenika.</param>
-        [EnableCors("CORS")]
-        [Route("IzmeniInformacijeORoditelju/{StariBrojTelRoditelja}/{NoviBrojTelRoditelja}/{ImeRoditelja}")]
-        [HttpPut]
-        public async Task<ActionResult> IzmeniInformacijeORoditelju(string StariBrojTelRoditelja, string NoviBrojTelRoditelja, string ImeRoditelja)
-        {
-            if (string.IsNullOrEmpty(StariBrojTelRoditelja) || StariBrojTelRoditelja.Length > 30)
-                return BadRequest($"Broj telefona {StariBrojTelRoditelja} nije validan");
-
-            if (string.IsNullOrEmpty(NoviBrojTelRoditelja) || NoviBrojTelRoditelja.Length > 30)
-                return BadRequest($"Broj telefona {NoviBrojTelRoditelja} nije validan");
-
-            if (string.IsNullOrEmpty(ImeRoditelja) || ImeRoditelja.Length > 30)
-                return BadRequest($"Podatak {ImeRoditelja} nije validan");
-
-            try
-            {
-
-                Ucenik u = await Context.Ucenici.Where(p => p.BrojTelefonaRoditelja.Equals(StariBrojTelRoditelja)).FirstOrDefaultAsync();
-
-                if (u == null)
-                    return BadRequest("Ne postoji takav ucenik!");
-
-                u.BrojTelefonaRoditelja = NoviBrojTelRoditelja;
-
-                if (!string.IsNullOrEmpty(ImeRoditelja))
-                    u.ImeRoditelja = ImeRoditelja;
-
-                Context.Ucenici.Update(u);
-
-                await Context.SaveChangesAsync();
-
-                return Ok($"Promenjen ucenik : {u.Ime} {u.Prezime}, {u.ImeRoditelja} {u.BrojTelefonaRoditelja}");
-
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
         }
 
-        /// <summary> Nadji ucenika preko imena, prezimena i broja telefona roditelja. </summary>
-        /// <param name="Ime"> Ime ucenika kog trazimo. </param>
-        /// <param name="Prezime"> Prezime ucenika kog trazimo. </param>
-        /// <param name="BrojTelefonaRoditelja"> Broj telefona roditelja ucenika kog trazimo. </param>
-        /// <returns> Lista ucenika </returns>
-        [Route("NadjiUcenika/{Ime}/{Prezime}/{BrojTelefonaRoditelja}")]
         [HttpGet]
-        public async Task<ActionResult> NadjiUcenika(string Ime, string Prezime, string BrojTelefonaRoditelja)
+        [Route("PretraziUcenike/{BrojTelefonaRoditelja}")]
+        public async Task<ActionResult> PretraziUcenike(string BrojTelefonaRoditelja)
         {
-            try
+            bool onlyDig = true;
+            char[] charList = BrojTelefonaRoditelja.ToCharArray();
+            int i = 0;
+            while (i < charList.Count() && onlyDig)
             {
-                return Ok(await Context.Ucenici.Where(p => (p.Ime == Ime && p.Prezime == Prezime && p.BrojTelefonaRoditelja == BrojTelefonaRoditelja)).ToListAsync());
+                if (charList[i] < '0' || charList[i] > '9')
+                    onlyDig = false;
+                i++;
             }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-        /// <summary> Nadji ucenika preko imena i prezimena. </summary>
-        /// <param name="Ime"> Ime ucenika kog trazimo. </param>
-        /// <param name="Prezime"> Prezime ucenika kog trazimo. </param>
-        /// <returns> Lista ucenika </returns>
-        [Route("NadjiUcenika/{Ime}/{Prezime}")]
-        [HttpGet]
-        public async Task<ActionResult> NadjiUcenika(string Ime, string Prezime)
-        {
-            try
-            {
-                return Ok(await Context.Ucenici.Where(p => (p.Ime == Ime && p.Prezime == Prezime)).ToListAsync());
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
 
-        ///<summary> Brise ucenika preko ID </summary>
-        ///<param name="ID"> Indetifikacioni broj </param>
-        [EnableCors("CORS")]
-        [Route("IzbrisiUcenika/{ID}")]
+            if (string.IsNullOrWhiteSpace(BrojTelefonaRoditelja) || BrojTelefonaRoditelja.Length > 30 || !onlyDig)
+                return BadRequest($"Parametar 'Broj telefona roditelja ucenika' : {BrojTelefonaRoditelja} nije moguc!");
+
+            try
+            {
+
+                var ucenik = await Context.Ucenici.Where(p => p.BrojTelefonaRoditelja.Equals(BrojTelefonaRoditelja)).FirstOrDefaultAsync();
+                return Ok(ucenik);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
         [HttpDelete]
-        public async Task<ActionResult> IzbrisiUcenika(int ID)
+        [Route("ObrisiUcenika/{UcenikID}")]
+        public async Task<ActionResult> ObrisiUcenika(int UcenikID)
         {
-            if (ID < 0)
-                return BadRequest("Nije validan ID");
-
             try
             {
-                var ucenik = await Context.Ucenici.Where(p => p.ID == ID).FirstAsync();
+                var ucenik = await Context.Ucenici.Where(p => p.ID == UcenikID).FirstOrDefaultAsync();
+                if (ucenik == null)
+                    throw new Exception("Greska, nema takve aktivnosti ili ucenika!");
+                var listaPohadja = await Context.PohadjaAktivnost.Where(p => p.Ucenik.ID == UcenikID).ToListAsync();
 
-                string poruka = $"Izbrisan ucenik {ucenik.Ime} {ucenik.Prezime}";
-
-                Context.Ucenici.Remove(ucenik);
+                foreach (var poh in listaPohadja)
+                {
+                    Context.Remove(poh);
+                }
+                Context.Remove(ucenik);
                 await Context.SaveChangesAsync();
-
-                return Ok(poruka);
-
+                return Ok("Postavljen novi datum placanja!");
             }
             catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
-        }*/
+        }
     }
 }

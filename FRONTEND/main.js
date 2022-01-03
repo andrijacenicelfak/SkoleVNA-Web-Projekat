@@ -1,6 +1,7 @@
 import { Ucenik } from "./Ucenik.js";
 import { Skola } from "./Skola.js";
 import { AktivnostForma } from "./AktivnostForma.js";
+import { UcenikForma } from "./UcenikForma.js";
 let sveSkole = [];
 
 ucitajSkole();
@@ -121,6 +122,8 @@ function prikazZaUcenike() {
     let sadrzaj = document.getElementsByClassName("sadrzaj").item(0);
     removeAllChildNodes(sadrzaj);
 
+    let ucenikForma = new UcenikForma();
+    ucenikForma.crtaj(sadrzaj);
 
     //console.log("UCENICI");
 }

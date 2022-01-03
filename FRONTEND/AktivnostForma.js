@@ -14,7 +14,7 @@ export class AktivnostForma {
         this.nastavnik = new Nastavnik(-1, "", "", 0);
     }
     updateListuAktivnosti() {
-        let selectAktivnost = document.getElementsByClassName("selectAktivnost").item(0);
+        let selectAktivnost = document.getElementById("selectAktivnost");
         let aktivnost;
         this.listaAktivnosti.forEach(akt => {
             aktivnost = document.createElement("option");
@@ -39,16 +39,8 @@ export class AktivnostForma {
                     this.listaAktivnosti.push(akt);
                     //console.log(akt);
                 });
-                this.listaAktivnosti.push(new Aktivnost(-1, "Nije upisan", 0, -1, 0));
                 this.updateListuAktivnosti();
                 this.updateInfo();
-
-                if (this.listaAktivnosti.length > 1) {
-                    let btnUpisi = document.getElementById("btnUplati");
-                    btnUpisi.disabled = false;
-                    let btnIspisi = document.getElementById("btnIspisi");
-                    btnIspisi.disabled = false;
-                }
             });
         });
 
@@ -56,7 +48,6 @@ export class AktivnostForma {
     nadjiUcenikeUpisaneNaAktivnost(idAktivnosti) {
         this.listaUcenika.length = 0;
         if (idAktivnosti == -1) {
-            this.listaUcenika.length = 0;
             fetch("https://localhost:5001/Pohadja/VratiUcenikeKojiNisuUpisani").then(p => p.json().then(ucenici => {
                 ucenici.forEach(ucenik => {
                     let uc = new Ucenik(ucenik.id, ucenik.ime, ucenik.prezime, ucenik.brojTelefonaRoditelja, ucenik.imeRoditelja, idAktivnosti, "");
@@ -65,7 +56,6 @@ export class AktivnostForma {
                 });
                 this.updateListuUcenika();
             }));
-            this.updateListuUcenika();
         } else {
             fetch("https://localhost:5001/Pohadja/PreuzmiUcenikeUpisaneNaAktivnost/" + idAktivnosti).then(p => {
                 p.json().then(ucenici => {
@@ -151,7 +141,6 @@ export class AktivnostForma {
         btnUplati.onclick = (ev) => {
             this.uplatiZaUcenika(selectAktivnosti.options[selectAktivnosti.selectedIndex].value);
         };
-        btnUplati.disabled = true;
         btnUplatiDiv.appendChild(btnUplati);
 
         let btnIspisiDiv = document.createElement("div");
@@ -159,7 +148,6 @@ export class AktivnostForma {
         btnIspisi.innerHTML = "Ipisi sa aktivnosti";
         btnIspisi.className = "btnKontrola";
         btnIspisi.id = "btnIspisi";
-        btnIspisi.disabled = true;
         btnIspisi.onclick = (ev) => {
             this.ispisiUcenika(selectAktivnosti.options[selectAktivnosti.selectedIndex].value);
         };
@@ -167,17 +155,10 @@ export class AktivnostForma {
 
 
         let selectAktivnosti = document.createElement("select");
-        selectAktivnosti.classList += "selectAktivnost";
+        selectAktivnosti.className += "selKontrola";
+        selectAktivnosti.id = "selectAktivnost"
         selectAktivnosti.onchange = (ev) => {
             let aktivnostID = selectAktivnosti.options[selectAktivnosti.selectedIndex].value;
-            if (aktivnostID == -1) {
-                btnUplati.disabled = true;
-                btnIspisi.disabled = true;
-            }
-            else {
-                btnUplati.disabled = false;
-                btnIspisi.disabled = false;
-            }
             this.updateInfo(aktivnostID);
             this.nadjiUcenikeUpisaneNaAktivnost(aktivnostID);
             this.updateBrojDana();
@@ -281,28 +262,21 @@ export class AktivnostForma {
     }
 
     updateInfo() {
-        let selectAktivnost = document.getElementsByClassName("selectAktivnost").item(0);
+        let selectAktivnost = document.getElementById("selectAktivnost");
         let index = selectAktivnost.selectedIndex;
         let aktivnost = this.listaAktivnosti[index];
 
-        if (aktivnost.ID === -1) {
-            this.nastavnik.ID = -1;
-            this.nastavnik.Ime = "/";
-            this.nastavnik.Prezime = "/";
-            this.nastavnik.Iskustvo = 0;
-            this.dodajInfo();
-        } else {
-            fetch("https://localhost:5001/Nastavnik/VratiNastavnika/" + aktivnost.NastavnikID).then(p => {
-                p.json().then(n => {
-                    this.nastavnik.ID = n.id;
-                    this.nastavnik.Ime = n.ime;
-                    this.nastavnik.Prezime = n.prezime;
-                    this.nastavnik.Iskustvo = n.iskustvo;
-                    this.dodajInfo();
-                });
-
+        fetch("https://localhost:5001/Nastavnik/VratiNastavnika/" + aktivnost.NastavnikID).then(p => {
+            p.json().then(n => {
+                this.nastavnik.ID = n.id;
+                this.nastavnik.Ime = n.ime;
+                this.nastavnik.Prezime = n.prezime;
+                this.nastavnik.Iskustvo = n.iskustvo;
+                this.dodajInfo();
             });
-        }
+
+        });
+
     }
     dodajInfo() {
         let info = document.getElementById("info");
@@ -363,7 +337,7 @@ export class AktivnostForma {
 
     updateBrojDana() {
         let lblBrDanaAkt = document.getElementById("lblBrojDanaAktivnost");
-        let selectAktivnost = document.getElementsByClassName("selectAktivnost").item(0);
+        let selectAktivnost = document.getElementById("selectAktivnost");
         let index = selectAktivnost.selectedIndex;
         let aktivnost = this.listaAktivnosti[index];
         lblBrDanaAkt.innerHTML = aktivnost.BrojDanaUNedelji;
@@ -378,7 +352,7 @@ export class AktivnostForma {
         this.dodajKontrolu(kontrola);
 
         let divTabela = document.createElement("div");
-        divTabela.classList += "tableDiv";
+        divTabela.classList += "divTabela";
         host.appendChild(divTabela);
 
         this.dodajTabelu(divTabela);
