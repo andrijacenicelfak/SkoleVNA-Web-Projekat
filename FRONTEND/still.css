@@ -20,7 +20,6 @@ body{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    align-self: left;
 }
 table{
     size: auto;
@@ -29,10 +28,7 @@ table{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-}
-.btnKontrola, .btnNavigacija{
-    height: max(30px, 4vh);
-    width: max(100%, 3.5vw);
+    flex-grow: 2;
 }
 .red{
     justify-content:right;
@@ -41,13 +37,16 @@ table{
 }
 .navigacija{
     display: flex;
-    width: 15%;
     flex-direction: column;
+    flex-grow:1;
 }
 
 table, th, td {
     border: 1px solid black;
     border-collapse: collapse;
+}
+table{
+    width: 100%;
 }
 th, td {
     font-size: mind(100%, 4vw);
@@ -94,15 +93,31 @@ th, td {
 .kontrola{
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
 }
 .divKontrola{
     display: flex;
     flex-direction: row;
+    flex-grow: 1;
     align-items: center;
 }
 .divKontrola > input.tbxKontrola{
     height: 3vh;
 }
 .selKontrola{
-    width: max-content;
+    flex-grow: 1;
+}
+.tbxKontrola{
+    margin-left: auto;
+}
+.btnKontrola{
+    flex-grow: 1;
+    height: 100%;
+}
+.selKontrola{
+    flex-grow: 1;
+}
+.divTabela{
+    display: flex;
+    flex-grow: 1;
 }

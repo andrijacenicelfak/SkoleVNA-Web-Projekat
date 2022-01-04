@@ -60,28 +60,24 @@ function kreirajStranicu() {
     stranica.appendChild(donjiBar);
 }
 function kreairajNavigaciju(nav) {
-    let skoleSelectDiv = document.createElement("div");
-    skoleSelectDiv.className = "skoleSelectDiv";
-    nav.appendChild(skoleSelectDiv);
-
 
     let aktDiv = document.createElement("div");
-    aktDiv.className = "navigacijaDugme";
+    aktDiv.className = "divKontrola";
     nav.appendChild(aktDiv);
 
     let aktivnostDugme = document.createElement("button");
     aktivnostDugme.innerHTML = "Aktivnosti";
-    aktivnostDugme.className = "btnNavigacija";
+    aktivnostDugme.className = "btnKontrola";
     aktivnostDugme.onclick = prikazZaAktivnosti;
     aktDiv.appendChild(aktivnostDugme);
 
     let uceniciDiv = document.createElement("div");
-    uceniciDiv.className = "navigacijaDugme";
+    uceniciDiv.className = "divKontrola";
     nav.appendChild(uceniciDiv);
 
     let uceniciDugme = document.createElement("button");
     uceniciDugme.innerHTML = "Ucenici";
-    uceniciDugme.className = "btnNavigacija";
+    uceniciDugme.className = "btnKontrola";
     uceniciDugme.onclick = prikazZaUcenike;
     uceniciDiv.appendChild(uceniciDugme);
 }

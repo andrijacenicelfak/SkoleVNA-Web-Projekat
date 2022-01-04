@@ -1,12 +1,10 @@
 import { Aktivnost } from "./Aktivnost.js";
 import { Ucenik } from "./Ucenik.js";
 import { Nastavnik } from "./Nastavnik.js";
+import { kreirajDivTextITextBox } from "./funkcije.js";
+import { kreirajDivButton } from "./funkcije.js";
+import { removeAllChildNodes } from "./funkcije.js";
 
-function removeAllChildNodes(parent) {
-    while (parent.firstChild) {
-        parent.removeChild(parent.firstChild);
-    }
-}
 export class AktivnostForma {
     constructor() {
         this.listaAktivnosti = [];
@@ -23,7 +21,7 @@ export class AktivnostForma {
             selectAktivnost.appendChild(aktivnost);
         });
         this.nadjiUcenikeUpisaneNaAktivnost(selectAktivnost.options[selectAktivnost.selectedIndex].value);
-        this.updateBrojDana();
+        this.updateInfoNastavnik();
     }
 
     pribaviAktivnosti() {
@@ -47,27 +45,18 @@ export class AktivnostForma {
     }
     nadjiUcenikeUpisaneNaAktivnost(idAktivnosti) {
         this.listaUcenika.length = 0;
-        if (idAktivnosti == -1) {
-            fetch("https://localhost:5001/Pohadja/VratiUcenikeKojiNisuUpisani").then(p => p.json().then(ucenici => {
+        fetch("https://localhost:5001/Pohadja/PreuzmiUcenikeUpisaneNaAktivnost/" + idAktivnosti).then(p => {
+            p.json().then(ucenici => {
                 ucenici.forEach(ucenik => {
-                    let uc = new Ucenik(ucenik.id, ucenik.ime, ucenik.prezime, ucenik.brojTelefonaRoditelja, ucenik.imeRoditelja, idAktivnosti, "");
+                    let uc = new Ucenik(ucenik.ucenikID, ucenik.ime, ucenik.prezime, ucenik.brojTelefonaRoditelja, ucenik.imeRoditelja, idAktivnosti, ucenik.poslednjiDatumPlacanje);
                     this.listaUcenika.push(uc);
                     //console.log(uc);
                 });
                 this.updateListuUcenika();
-            }));
-        } else {
-            fetch("https://localhost:5001/Pohadja/PreuzmiUcenikeUpisaneNaAktivnost/" + idAktivnosti).then(p => {
-                p.json().then(ucenici => {
-                    ucenici.forEach(ucenik => {
-                        let uc = new Ucenik(ucenik.ucenikID, ucenik.ime, ucenik.prezime, ucenik.brojTelefonaRoditelja, ucenik.imeRoditelja, idAktivnosti, ucenik.poslednjiDatumPlacanje);
-                        this.listaUcenika.push(uc);
-                        //console.log(uc);
-                    });
-                    this.updateListuUcenika();
-                });
+                this.updateInfo();
             });
-        }
+        });
+
     }
     updateListuUcenika() {
         let tabelaUcenika = document.getElementsByClassName("tabela").item(0);
@@ -125,7 +114,7 @@ export class AktivnostForma {
     }
     dodajKontrolu(kontrola) {
         let aktivnostSelectDiv = document.createElement("div");
-        aktivnostSelectDiv.classList += "divUKotrola";
+        aktivnostSelectDiv.classList += "divKontrola";
         kontrola.appendChild(aktivnostSelectDiv);
 
         let lblAktivnost = document.createElement("label");
@@ -133,56 +122,99 @@ export class AktivnostForma {
         lblAktivnost.classList += "lblKontrola";
         aktivnostSelectDiv.appendChild(lblAktivnost);
 
-        let btnUplatiDiv = document.createElement("div");
-        let btnUplati = document.createElement("button");
-        btnUplati.className = "btnKontrola";
-        btnUplati.innerHTML = "Uplati";
-        btnUplati.id = "btnUplati";
-        btnUplati.onclick = (ev) => {
-            this.uplatiZaUcenika(selectAktivnosti.options[selectAktivnosti.selectedIndex].value);
-        };
-        btnUplatiDiv.appendChild(btnUplati);
-
-        let btnIspisiDiv = document.createElement("div");
-        let btnIspisi = document.createElement("button");
-        btnIspisi.innerHTML = "Ipisi sa aktivnosti";
-        btnIspisi.className = "btnKontrola";
-        btnIspisi.id = "btnIspisi";
-        btnIspisi.onclick = (ev) => {
-            this.ispisiUcenika(selectAktivnosti.options[selectAktivnosti.selectedIndex].value);
-        };
-        btnIspisiDiv.appendChild(btnIspisi);
-
 
         let selectAktivnosti = document.createElement("select");
         selectAktivnosti.className += "selKontrola";
         selectAktivnosti.id = "selectAktivnost"
         selectAktivnosti.onchange = (ev) => {
             let aktivnostID = selectAktivnosti.options[selectAktivnosti.selectedIndex].value;
-            this.updateInfo(aktivnostID);
             this.nadjiUcenikeUpisaneNaAktivnost(aktivnostID);
-            this.updateBrojDana();
+            this.updateInfoNastavnik();
         }
         aktivnostSelectDiv.appendChild(selectAktivnosti);
 
-        let aktivnostInfoDiv = document.createElement("div");
-        aktivnostInfoDiv.className = "divKontrola";
+        let divBrojDana = document.createElement("div");
+        divBrojDana.className = "divKontrola";
 
         let lblBrDana = document.createElement("label");
         lblBrDana.className = "lblKontrola";
         lblBrDana.innerHTML = "Broj dana :";
-        aktivnostInfoDiv.appendChild(lblBrDana);
+        divBrojDana.appendChild(lblBrDana);
 
         let lblBrDanaAkt = document.createElement("label");
         lblBrDanaAkt.className = "lblKontrola";
         lblBrDanaAkt.id = "lblBrojDanaAktivnost";
-        aktivnostInfoDiv.appendChild(lblBrDanaAkt);
+        divBrojDana.appendChild(lblBrDanaAkt);
 
-        kontrola.appendChild(aktivnostInfoDiv);
+        kontrola.appendChild(divBrojDana);
 
-        kontrola.appendChild(btnUplatiDiv);
+        let divCena = document.createElement("div");
+        divCena.className = "divKontrola";
 
-        kontrola.appendChild(btnIspisiDiv);
+        let lblCena = document.createElement("label");
+        lblCena.className = "lblKontrola";
+        lblCena.innerHTML = "Cena :";
+        divCena.appendChild(lblCena);
+
+        let lblCenaAkt = document.createElement("label");
+        lblCenaAkt.className = "lblKontrola";
+        lblCenaAkt.id = "lblCenaAkt";
+        divCena.appendChild(lblCenaAkt);
+
+        kontrola.appendChild(divCena);
+
+        let naslovDiv = document.createElement("div");
+        naslovDiv.className = "divInfoNaslov";
+        kontrola.appendChild(naslovDiv);
+
+        let lblNaslov = document.createElement("label");
+        naslovDiv.appendChild(lblNaslov);
+        lblNaslov.className = "lblInfoNaslov";
+        lblNaslov.innerHTML = "Nastavnik";
+
+
+        let imeDiv = document.createElement("div");
+        imeDiv.className = "divInfo";
+        kontrola.appendChild(imeDiv);
+        let lblIme = document.createElement("label");
+        lblIme.innerHTML = "Ime : ";
+        imeDiv.appendChild(lblIme);
+        lblIme.className = "lblInfo";
+        let lblNastavnikIme = document.createElement("label");
+        lblNastavnikIme.id = "imeNastavnik";
+        lblNastavnikIme.className = "lblInfo"
+        lblNastavnikIme.innerHTML = this.nastavnik.Ime;
+        imeDiv.appendChild(lblNastavnikIme);
+
+        let prezimeDiv = document.createElement("div");
+        prezimeDiv.className = "divInfo";
+        kontrola.appendChild(prezimeDiv);
+        let lblPrezime = document.createElement("label");
+        lblPrezime.innerHTML = "Prezime : ";
+        lblPrezime.className = "lblInfo";
+        prezimeDiv.appendChild(lblPrezime);
+
+        let lblNastavnikPrezime = document.createElement("label");
+        lblNastavnikPrezime.id = "prezimeNastavnik";
+        lblNastavnikPrezime.className = "lblInfo";
+        lblNastavnikPrezime.innerHTML = this.nastavnik.Prezime;
+        prezimeDiv.appendChild(lblNastavnikPrezime);
+
+        let iskustvoDiv = document.createElement("div");
+        iskustvoDiv.className = "divInfo";
+        kontrola.appendChild(iskustvoDiv);
+
+        let lblIskustvo = document.createElement("label");
+        lblIskustvo.className = "lblInfo";
+        lblIskustvo.innerHTML = "Iskustvo: "
+        iskustvoDiv.appendChild(lblIskustvo);
+
+        let lblNastavnikIskustvo = document.createElement("label");
+        lblNastavnikIskustvo.className = "lblInfo";
+        lblNastavnikIskustvo.id = "iskustvoNastavnik";
+        lblNastavnikIskustvo.innerHTML = this.nastavnik.Iskustvo / 1000 + "  /10";
+        iskustvoDiv.appendChild(lblNastavnikIskustvo);
+
 
         /*
         //Dugme za testiranje
@@ -279,68 +311,38 @@ export class AktivnostForma {
 
     }
     dodajInfo() {
-        let info = document.getElementById("info");
-        removeAllChildNodes(info);
+        let ime = document.getElementById("imeNastavnik");
+        ime.innerHTML = this.nastavnik.Ime;
 
-        let naslovDiv = document.createElement("div");
-        naslovDiv.className = "divInfoNaslov";
-        info.appendChild(naslovDiv);
+        let prezime = document.getElementById("prezimeNastavnik");
+        prezime.innerHTML = this.nastavnik.Prezime;
 
-        let lblNaslov = document.createElement("label");
-        naslovDiv.appendChild(lblNaslov);
-        lblNaslov.className = "lblInfoNaslov";
-        lblNaslov.innerHTML = "Nastavnik";
-
-
-        let imeDiv = document.createElement("div");
-        imeDiv.className = "divInfo";
-        info.appendChild(imeDiv);
-        let lblIme = document.createElement("label");
-        lblIme.innerHTML = "Ime : ";
-        imeDiv.appendChild(lblIme);
-        lblIme.className = "lblInfo";
-        let lblNastavnikIme = document.createElement("label");
-        lblNastavnikIme.id = "imeNastavnik";
-        lblNastavnikIme.className = "lblInfo"
-        lblNastavnikIme.innerHTML = this.nastavnik.Ime;
-        imeDiv.appendChild(lblNastavnikIme);
-
-        let prezimeDiv = document.createElement("div");
-        prezimeDiv.className = "divInfo";
-        info.appendChild(prezimeDiv);
-        let lblPrezime = document.createElement("label");
-        lblPrezime.innerHTML = "Prezime : ";
-        lblPrezime.className = "lblInfo";
-        prezimeDiv.appendChild(lblPrezime);
-
-        let lblNastavnikPrezime = document.createElement("label");
-        lblNastavnikPrezime.id = "prezimeNastavnik";
-        lblNastavnikPrezime.className = "lblInfo";
-        lblNastavnikPrezime.innerHTML = this.nastavnik.Prezime;
-        prezimeDiv.appendChild(lblNastavnikPrezime);
-
-        let iskustvoDiv = document.createElement("div");
-        iskustvoDiv.className = "divInfo";
-        info.appendChild(iskustvoDiv);
-
-        let lblIskustvo = document.createElement("label");
-        lblIskustvo.className = "lblInfo";
-        lblIskustvo.innerHTML = "Iskustvo: "
-        iskustvoDiv.appendChild(lblIskustvo);
-
-        let lblNastavnikIskustvo = document.createElement("label");
-        lblNastavnikIskustvo.className = "lblInfo";
-        lblNastavnikIskustvo.id = "iskustvoNastavnik";
-        lblNastavnikIskustvo.innerHTML = this.nastavnik.Iskustvo / 1000 + "  /10";
-        iskustvoDiv.appendChild(lblNastavnikIskustvo);
+        let isk = document.getElementById("iskustvoNastavnik");
+        isk.innerHTML = this.nastavnik.Iskustvo / 1000 + "/ 10";
     }
 
-    updateBrojDana() {
+    dodajInfoKontrolu(host) {
+
+        let selectAktivnosti = document.getElementById("selectAktivnost");
+        host.appendChild(kreirajDivButton("btnKontrola", "Uplati", "divKontrola", (ev) => {
+            this.uplatiZaUcenika(selectAktivnosti.options[selectAktivnosti.selectedIndex].value);
+        }));
+
+        host.appendChild(kreirajDivButton("btnKontrola", "Ispisi sa aktivnosti", "divKontrola", (ev) => {
+            this.ispisiUcenika(selectAktivnosti.options[selectAktivnosti.selectedIndex].value);
+        }));
+
+
+    }
+
+    updateInfoNastavnik() {
         let lblBrDanaAkt = document.getElementById("lblBrojDanaAktivnost");
+        let lblCena = document.getElementById("lblCenaAkt");
         let selectAktivnost = document.getElementById("selectAktivnost");
         let index = selectAktivnost.selectedIndex;
         let aktivnost = this.listaAktivnosti[index];
         lblBrDanaAkt.innerHTML = aktivnost.BrojDanaUNedelji;
+        lblCena.innerHTML = aktivnost.Cena;
     }
 
     crtaj(host) {
@@ -358,9 +360,10 @@ export class AktivnostForma {
         this.dodajTabelu(divTabela);
 
         let info = document.createElement("div");
-        info.className = "info";
-        info.id = "info";
+        info.className = "kontrola";
         host.appendChild(info);
+
+        this.dodajInfoKontrolu(info);
 
         this.pribaviAktivnosti();
     }
