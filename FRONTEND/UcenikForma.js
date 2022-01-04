@@ -4,6 +4,7 @@ import { Nastavnik } from "./Nastavnik.js";
 import { kreirajDivTextITextBox } from "./funkcije.js";
 import { kreirajDivButton } from "./funkcije.js";
 import { removeAllChildNodes } from "./funkcije.js";
+import { kreirajDiviLabel } from "./funkcije.js";
 
 export class UcenikForma {
     constructor() {
@@ -105,6 +106,7 @@ export class UcenikForma {
     }
     //Crtanje
     crtajDivDodaj(host) {
+        host.appendChild(kreirajDiviLabel("divKontrola", "Dodaj novog ucenika", "lblKontrola lblKontrolaNaslov"));
         host.appendChild(kreirajDivTextITextBox("Ime", "lblKontrola", "tbxKontrola", "tbxImeKontrola", "divKontrola"));
         host.appendChild(kreirajDivTextITextBox("Prezime", "lblKontrola", "tbxKontrola", "tbxPrezimeKontrola", "divKontrola"));
         host.appendChild(kreirajDivTextITextBox("Broj Telefona Roditelja", "lblKontrola", "tbxKontrola", "tbxBrojKontrola", "divKontrola"));
@@ -251,7 +253,7 @@ export class UcenikForma {
         this.crtajDivDodaj(divDodaj);
 
         let divTabela = document.createElement("div");
-        divTabela.className = "tabela";
+        divTabela.className = "divTabela";
         host.appendChild(divTabela);
         this.crtajTabelu(divTabela);
 

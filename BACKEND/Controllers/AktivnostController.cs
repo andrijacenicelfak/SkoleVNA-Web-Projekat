@@ -40,9 +40,6 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 return BadRequest(e.Message);
             }
         }
-
-
-        /*
         [Route("DodajAktivnost/{Naziv}/{Cena}/{IdSkole}/{BrojDana}/{IDNastavnika}")]
         [HttpPost]
         public async Task<ActionResult> DodajAktivnost(string Naziv, int Cena, int IdSkole, int BrojDana, int IDNastavnika)
@@ -72,7 +69,33 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 return BadRequest(e.Message);
             }
         }
+        [Route("ZameniNastavnika/{AktivnostID}/{NastavnikID}")]
+        [HttpPut]
+        public async Task<ActionResult> ZameniNastavnika(int AktivnostID, int NastavnikID)
+        {
+            try
+            {
+                var akt = await Context.Aktivnosti.Where(p => p.ID == AktivnostID).Include(p => p.Nastavnik).ThenInclude(p => p.Aktivnosti).FirstOrDefaultAsync();
+                if (akt == null)
+                    return BadRequest("Ne postoji takva aktivnost!");
+                var nastavnik = await Context.Nastavnici.Where(p => p.ID == NastavnikID).Include(p => p.Aktivnosti).FirstOrDefaultAsync();
+                if (nastavnik == null)
+                    return BadRequest("Ne postoji takav nastavnik!");
 
+                akt.Nastavnik.Aktivnosti.Remove(akt);
+                nastavnik.Aktivnosti.Add(akt);
+                akt.Nastavnik = nastavnik;
+                Context.Update(akt);
+                Context.Update(nastavnik);
+                await Context.SaveChangesAsync();
+
+                return Ok("Zamenjen Nastavnik!");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
         [EnableCors("CORS")]
         [Route("ObrisiAktivnost/{ID}")]
         [HttpDelete]
@@ -81,6 +104,11 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
             try
             {
                 var aktivnost = await Context.Aktivnosti.Where(p => p.ID == ID).FirstAsync();
+                var pohadjaLista = await Context.PohadjaAktivnost.Where(p => p.Aktivnost.ID == ID).ToListAsync();
+                foreach (var poh in pohadjaLista)
+                {
+                    Context.Remove(poh);
+                }
 
                 Context.Aktivnosti.Remove(aktivnost);
 
@@ -93,22 +121,41 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 return BadRequest(e.Message);
             }
         }
-
-        [Route("PreuzmiSveAktivnosti")]
-        [HttpGet]
-
-        public async Task<ActionResult> PreuzmiSveAktivnosti()
+        [Route("ZameniIskustvo/{NastavnikID}/{Iskustvo}")]
+        [HttpPut]
+        public async Task<ActionResult> ZameniIskustvo(int NastavnikID, int Iskustvo)
         {
             try
             {
-                var akt = Context.Aktivnosti.Select(p => new { p.Naziv, p.BrojDanaUNedelji, p.Cena, p.ID, skolaID = p.Skola.ID });
+                var nastavnik = await Context.Nastavnici.Where(p => p.ID == NastavnikID).FirstOrDefaultAsync();
+                nastavnik.Iskustvo = Iskustvo;
+                Context.Update(nastavnik);
 
-                return Ok(await akt.ToListAsync());
+                await Context.SaveChangesAsync();
+
+                return Ok("Uspesno promenjeno iskustvo!");
             }
             catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
-        }*/
+        }
+        /*
+                        [Route("PreuzmiSveAktivnosti")]
+                        [HttpGet]
+
+                        public async Task<ActionResult> PreuzmiSveAktivnosti()
+                        {
+                            try
+                            {
+                                var akt = Context.Aktivnosti.Select(p => new { p.Naziv, p.BrojDanaUNedelji, p.Cena, p.ID, skolaID = p.Skola.ID });
+
+                                return Ok(await akt.ToListAsync());
+                            }
+                            catch (Exception e)
+                            {
+                                return BadRequest(e.Message);
+                            }
+                        }*/
     }
 }

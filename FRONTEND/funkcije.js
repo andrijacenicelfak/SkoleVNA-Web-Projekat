@@ -32,3 +32,33 @@ export function removeAllChildNodes(parent) {
         parent.removeChild(parent.firstChild);
     }
 }
+export function kreirajDiviLabel(divClass, lblText, lblClass) {
+    let div = document.createElement("div");
+    div.className = divClass;
+    let lbl = document.createElement("label");
+    lbl.innerHTML = lblText;
+    lbl.className = lblClass;
+    div.appendChild(lbl);
+    return div;
+
+}
+
+export function kreirajDivDvaDugmeta(divClass, btnClass1, btnText1, btnFunc1, btnClass2, btnText2, btnFunc2) {
+    let div = document.createElement("div");
+
+    div.className = divClass;
+
+    let btn1 = document.createElement("button");
+    btn1.className = btnClass1;
+    btn1.innerHTML = btnText1;
+    btn1.onclick = btnFunc1;
+    div.appendChild(btn1);
+
+    let btn2 = document.createElement("button");
+    btn2.className = btnClass2;
+    btn2.innerHTML = btnText2;
+    btn2.onclick = btnFunc2;
+    div.appendChild(btn2);
+
+    return div;
+}
