@@ -220,7 +220,7 @@ export class AktivnostForma {
 
         kontrola.appendChild(divCena);
 
-        kontrola.appendChild(kreirajDiviLabel("divKontrola", "Nastavnik", "lblKontrola lblKontrolaNaslov"));
+        kontrola.appendChild(kreirajDiviLabel("divKontrolaNaslov", "Nastavnik", "lblKontrola lblKontrolaNaslov"));
 
         let imeDiv = document.createElement("div");
         imeDiv.className = "divKontrola";
@@ -381,7 +381,7 @@ export class AktivnostForma {
             this.ispisiUcenika(selectAktivnosti.options[selectAktivnosti.selectedIndex].value);
         }));
 
-        host.appendChild(kreirajDiviLabel("divKontrola", "Aktivnosti", "lblKontrola lblKontrolaNaslov"));
+        host.appendChild(kreirajDiviLabel("divKontrolaNaslov", "Aktivnosti", "lblKontrola lblKontrolaNaslov"));
 
         host.appendChild(kreirajDivTextITextBox("Naziv", "lblKontrola", "tbxKontrola", "aktivnostNaziv", "divKontrola"));
         host.appendChild(kreirajDivTextITextBox("Broj Dana", "lblKontrola", "tbxKontrola", "aktivnostBrojDana", "divKontrola"));

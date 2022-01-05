@@ -13,7 +13,7 @@ export class UcenikForma {
     }
 
     pribaviAktivnosti() {
-        let slSkole = document.getElementsByClassName("selectKontrola").item(0);
+        let slSkole = document.getElementById("selectSkole");
         let skolaID = slSkole.options[slSkole.selectedIndex].value;
         this.listaAktivnosti.length = 0;
 
@@ -106,7 +106,7 @@ export class UcenikForma {
     }
     //Crtanje
     crtajDivDodaj(host) {
-        host.appendChild(kreirajDiviLabel("divKontrola", "Dodaj novog ucenika", "lblKontrola lblKontrolaNaslov"));
+        host.appendChild(kreirajDiviLabel("divKontrolaNaslov", "Dodaj novog ucenika", "lblKontrola lblKontrolaNaslov"));
         host.appendChild(kreirajDivTextITextBox("Ime", "lblKontrola", "tbxKontrola", "tbxImeKontrola", "divKontrola"));
         host.appendChild(kreirajDivTextITextBox("Prezime", "lblKontrola", "tbxKontrola", "tbxPrezimeKontrola", "divKontrola"));
         host.appendChild(kreirajDivTextITextBox("Broj Telefona Roditelja", "lblKontrola", "tbxKontrola", "tbxBrojKontrola", "divKontrola"));

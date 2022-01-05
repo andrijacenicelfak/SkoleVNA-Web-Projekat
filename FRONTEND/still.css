@@ -1,7 +1,6 @@
 body{
     display: flex;
     flex-direction: column;
-
 }
 .stranica{
     display:  flex;
@@ -35,58 +34,17 @@ body{
 .navigacija{
     display: flex;
     flex-direction: column;
-    flex-grow:1;
+    flex-grow : 1;
 }
 
-table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-}
-table{
-    width: 100%;
-}
-th, td {
-    font-size: mind(100%, 4vw);
-    padding: 7px;
-}
 .divInfo{
     padding-top: 6px;
     padding-bottom: 2px;
 }
-.divInfo > label.lblInfo:not(:first-child){
-    padding-left: 4px;
-
-}
 .divKontrola > label.lblKontrola:not(:first-child){
     padding-left: 4px;
+}
 
-}
-.selektovanRed{
-    background-color: rgb(40, 104, 126);
-    color:rgb(255, 255, 255);
-}
-.redUTabeli{
-    transition: 0.2s;
-}
-.redUTabeli:hover{
-    background-color: rgb(107, 171, 192);
-}
-.info{
-    display: flex;
-    flex-direction: column;
-    margin-left: 10px;
-    /*width: 4vw;*/
-}
-.divInfo{
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-}
-.lblInfoNaslov{
-    background-color: rgb(92, 174, 199);
-    color: rgb(255, 255, 255);
-    font-size: 120%;
-}
 .kontrola{
     display: flex;
     flex-direction: column;
@@ -99,7 +57,8 @@ th, td {
     align-items: center;
 }
 .divKontrola > input.tbxKontrola{
-    height: 3vh;
+    min-height: 25px;
+    font: inherit;
 }
 .selKontrola{
     flex-grow: 1;
@@ -111,15 +70,104 @@ th, td {
     flex-grow: 1;
     height: 100%;
 }
-.selKontrola{
-    flex-grow: 1;
-}
 .divTabela{
     display: flex;
-    flex-grow: 1;
+    flex-direction: column;
+    padding-left: 4px;
+    padding-right: 4px;
+    flex-grow: 8;
 }
 .lblKontrolaNaslov{
-    margin-left: auto;
-    margin-right: auto;
     font-size: 130%;
+}
+/* Gore funkcionalsnot, dole lep izgled*/
+body{
+    background-color: rgb(39, 39, 39);
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    color: aliceblue;
+}
+.divKontrola{
+    padding-bottom : 4px;
+}
+.btnKontrola{
+    background: rgb(36, 64, 158);
+    color: white;
+    border: none;
+    text-align: center;
+    font-size: 16px;
+    transition: 0.6s;
+    padding: 8px;
+}
+.btnKontrola:not(:last-child){
+    margin-right: 4px;
+}
+.btnKontrola:hover{
+    background: rgb(103, 83, 175);
+}
+.divGBNaslov{
+    display: flex;
+    background: rgb(41, 47, 99);
+    flex-grow: 1;
+    justify-content: center;
+}
+.lblNaslov{
+    font-size: large;
+    font-weight: 900;
+}
+table{
+    width: 100%;
+    border-collapse: collapse;
+    font: inherit;
+}
+.redUTabeli{
+    transition: 0.6s;
+    height: 50px;
+    font:inherit;
+}
+.selektovanRed{
+    background-color: rgb(36, 65, 158);
+    color:rgb(255, 255, 255);
+}
+.redUTabeli:nth-child(even):not(.selektovanRed):not(:hover) {
+    background: rgb(51, 51, 53);
+}
+.redUTabeli:nth-child(odd):not(.selektovanRed):not(:hover){
+    background-color: rgb(41, 41, 44);
+}
+.redUTabeli:hover:not(.selektovanRed){
+    background-color: rgb(78, 97, 202);
+    cursor: pointer;
+}
+.selKontrola{
+    background-color: rgb(36, 65, 158);
+    color: white;
+    padding: 8px;
+    border: none;
+    font-size: 120%;
+    cursor: pointer;
+}
+.selKontrola:hover{
+    background: rgb(78, 97, 202);
+  }
+option{
+    cursor: pointer;
+}
+.divKontrola:has(.lblKontrolaNaslov){
+    background: rgb(41, 47, 99);
+}
+.zaglavlje{
+    background-color: rgb(41, 47, 99);
+    height: 60px;
+}
+.lblGornjiBar{
+    background-color: rgb(41, 47, 99);
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-left: 5%;
+    padding-right: 5%;
+}
+.divKontrolaNaslov{
+    background-color: rgb(41, 47, 99);
+    display: flex;
+    justify-content: center;
 }

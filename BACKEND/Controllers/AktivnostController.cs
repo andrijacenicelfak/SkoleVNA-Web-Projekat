@@ -121,25 +121,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 return BadRequest(e.Message);
             }
         }
-        [Route("ZameniIskustvo/{NastavnikID}/{Iskustvo}")]
-        [HttpPut]
-        public async Task<ActionResult> ZameniIskustvo(int NastavnikID, int Iskustvo)
-        {
-            try
-            {
-                var nastavnik = await Context.Nastavnici.Where(p => p.ID == NastavnikID).FirstOrDefaultAsync();
-                nastavnik.Iskustvo = Iskustvo;
-                Context.Update(nastavnik);
-
-                await Context.SaveChangesAsync();
-
-                return Ok("Uspesno promenjeno iskustvo!");
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
+       
         /*
                         [Route("PreuzmiSveAktivnosti")]
                         [HttpGet]

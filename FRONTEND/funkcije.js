@@ -62,3 +62,10 @@ export function kreirajDivDvaDugmeta(divClass, btnClass1, btnText1, btnFunc1, bt
 
     return div;
 }
+
+export function kreirajOpcijuZaSelekt(optionText, optionValue) {
+    let op = document.createElement("option");
+    op.value = optionValue;
+    op.innerHTML = optionText;
+    return op;
+}
