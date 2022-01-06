@@ -57,9 +57,9 @@ export class NastavnikForma {
 
     crtajDivDodaj(host) {
         host.appendChild(kreirajDiviLabel("divKontrolaNaslov", "Dodaj novog Nastavnika", "lblKontrola lblKontrolaNaslov"));
-        host.appendChild(kreirajDivTextITextBox("Ime", "lblKontrola", "tbxKontrola", "imeNastavnika", "divKontrola"));
-        host.appendChild(kreirajDivTextITextBox("Prezime", "lblKontrola", "tbxKontrola", "prezimeNastavnika", "divKontrola"));
-        host.appendChild(kreirajDivTextITextBox("Iskustvo", "lblKontrola", "tbxKontrola", "iskustvoNastavnika", "divKontrola"));
+        host.appendChild(kreirajDivTextITextBox("Ime", "lblKontrola", "tbxKontrola", "text", "imeNastavnika", "divKontrola"));
+        host.appendChild(kreirajDivTextITextBox("Prezime", "lblKontrola", "tbxKontrola", "text", "prezimeNastavnika", "divKontrola"));
+        host.appendChild(kreirajDivTextITextBox("Iskustvo", "lblKontrola", "tbxKontrola", "number", "iskustvoNastavnika", "divKontrola"));
         host.appendChild(kreirajDivButton("btnKontrola", "Dodaj Nastavnika", "divKontrola", (ev) => { this.dodajNastavnika(); }));
     }
 
@@ -154,7 +154,7 @@ export class NastavnikForma {
         red.appendChild(el);
     }
     crtajKontrolu(host) {
-        host.appendChild(kreirajDivTextITextBox("Iskustvo", "lblKontrola", "tbxKontrola", "iskustvoNastavnikaNovo", "divKontrola"));
+        host.appendChild(kreirajDivTextITextBox("Iskustvo", "lblKontrola", "tbxKontrola", "number", "iskustvoNastavnikaNovo", "divKontrola"));
         host.appendChild(kreirajDivButton("btnKontrola", "Zameni Iskustvo", "divKontrola", (e) => { this.zameniIskustvo(); }));
         host.appendChild(kreirajDivButton("btnKontrola", "Izbrisi Nastavnika", "divKontrola", (e) => { this.izbrisiNastavnika(); }))
     }

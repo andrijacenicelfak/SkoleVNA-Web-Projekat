@@ -1,10 +1,10 @@
-export function kreirajDivTextITextBox(lblText, lblClass, tbxClass, tbxID, divClass) {
+export function kreirajDivTextITextBox(lblText, lblClass, tbxClass, tbxType, tbxID, divClass) {
     let lbl = document.createElement("label");
     lbl.className = lblClass;
     lbl.innerHTML = lblText;
 
     let tbx = document.createElement("input");
-    tbx.type = "text";
+    tbx.type = tbxType;
     tbx.className = tbxClass;
     tbx.id = tbxID;
 

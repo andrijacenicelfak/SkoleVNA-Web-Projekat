@@ -383,9 +383,9 @@ export class AktivnostForma {
 
         host.appendChild(kreirajDiviLabel("divKontrolaNaslov", "Aktivnosti", "lblKontrola lblKontrolaNaslov"));
 
-        host.appendChild(kreirajDivTextITextBox("Naziv", "lblKontrola", "tbxKontrola", "aktivnostNaziv", "divKontrola"));
-        host.appendChild(kreirajDivTextITextBox("Broj Dana", "lblKontrola", "tbxKontrola", "aktivnostBrojDana", "divKontrola"));
-        host.appendChild(kreirajDivTextITextBox("Cena", "lblKontrola", "tbxKontrola", "aktivnostCena", "divKontrola"));
+        host.appendChild(kreirajDivTextITextBox("Naziv", "lblKontrola", "tbxKontrola", "text", "aktivnostNaziv", "divKontrola"));
+        host.appendChild(kreirajDivTextITextBox("Broj Dana", "lblKontrola", "tbxKontrola", "number", "aktivnostBrojDana", "divKontrola"));
+        host.appendChild(kreirajDivTextITextBox("Cena", "lblKontrola", "tbxKontrola", "numver", "aktivnostCena", "divKontrola"));
 
         let divSelNastavnik = document.createElement("div");
         divSelNastavnik.className = "divKontrola";

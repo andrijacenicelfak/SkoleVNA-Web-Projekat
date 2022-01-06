@@ -107,10 +107,10 @@ export class UcenikForma {
     //Crtanje
     crtajDivDodaj(host) {
         host.appendChild(kreirajDiviLabel("divKontrolaNaslov", "Dodaj novog ucenika", "lblKontrola lblKontrolaNaslov"));
-        host.appendChild(kreirajDivTextITextBox("Ime", "lblKontrola", "tbxKontrola", "tbxImeKontrola", "divKontrola"));
-        host.appendChild(kreirajDivTextITextBox("Prezime", "lblKontrola", "tbxKontrola", "tbxPrezimeKontrola", "divKontrola"));
-        host.appendChild(kreirajDivTextITextBox("Broj Telefona Roditelja", "lblKontrola", "tbxKontrola", "tbxBrojKontrola", "divKontrola"));
-        host.appendChild(kreirajDivTextITextBox("Ime Roditelja", "lblKontrola", "tbxKontrola", "tbxImeRoditeljaKontrola", "divKontrola"));
+        host.appendChild(kreirajDivTextITextBox("Ime", "lblKontrola", "tbxKontrola", "text", "tbxImeKontrola", "divKontrola"));
+        host.appendChild(kreirajDivTextITextBox("Prezime", "lblKontrola", "tbxKontrola", "text", "tbxPrezimeKontrola", "divKontrola"));
+        host.appendChild(kreirajDivTextITextBox("Broj Telefona Roditelja", "lblKontrola", "tbxKontrola", "number", "tbxBrojKontrola", "divKontrola"));
+        host.appendChild(kreirajDivTextITextBox("Ime Roditelja", "lblKontrola", "tbxKontrola", "text", "tbxImeRoditeljaKontrola", "divKontrola"));
 
         let divBtnDodaj = document.createElement("div");
         divBtnDodaj.className = "divKontrola";
@@ -234,7 +234,7 @@ export class UcenikForma {
         host.appendChild(kreirajDivButton("btnKontrola", "Upisi Ucenika", "divKontrola", (ev) => { this.upisiUcenika(selAktivnost.options[selAktivnost.selectedIndex].value); }));
 
         // broj telefona za pretragu
-        host.appendChild(kreirajDivTextITextBox("Broj Telefona", "lblKontrola", "tbxKontrola", "tbxBrojTelefonaPretraga", "divKontrola"));
+        host.appendChild(kreirajDivTextITextBox("Broj Telefona", "lblKontrola", "tbxKontrola", "number", "tbxBrojTelefonaPretraga", "divKontrola"));
 
         //dugme za pretragu
         host.appendChild(kreirajDivButton("btnKontrola", "Pretrazi", "divKontrola", (ev) => { this.pretraziUcenika() }))

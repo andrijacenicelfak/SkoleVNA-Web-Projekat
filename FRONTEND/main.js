@@ -38,16 +38,31 @@ function kreirajStranicu() {
     divSelectSkole.className = "divKontrola";
     gornjiBar.appendChild(divSelectSkole);
 
+    let divLblSkole = document.createElement("div");
+    divLblSkole.className = "divKontrolaNaslov";
     let lblSkole = document.createElement("label");
     lblSkole.innerHTML = "Skole "
-    lblSkole.className = "lblGornjiBar";
-    divSelectSkole.appendChild(lblSkole);
+    lblSkole.className = "lblKontrolaNaslov";
+    divLblSkole.appendChild(lblSkole);
+    divSelectSkole.appendChild(divLblSkole);
 
     let selectSkole = document.createElement("select");
     selectSkole.className = "selKontrola";
     selectSkole.id = "selectSkole";
     selectSkole.onchange = (ev) => {
-        prikazZaAktivnosti();
+        let sel = document.getElementById("selectKontrolee");
+        switch (sel.selectedIndex) {
+            case 0:
+                prikazZaAktivnosti();
+                break;
+            case 1:
+                prikazZaUcenike();
+                break;
+            default:
+                prikazNastavnici();
+                break;
+        }
+
     }
     divSelectSkole.appendChild(selectSkole);
 
@@ -80,6 +95,7 @@ function kreairajNavigaciju(nav) {
         */
     let selekcija = document.createElement("select");
     selekcija.className = "selKontrola";
+    selekcija.id = "selectKontrolee"
     selekcija.appendChild(kreirajOpcijuZaSelekt("Aktivnosti", 1));
     selekcija.appendChild(kreirajOpcijuZaSelekt("Ucenici", 2));
     selekcija.appendChild(kreirajOpcijuZaSelekt("Nastavnici", 3));
