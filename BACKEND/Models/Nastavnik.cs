@@ -19,8 +19,8 @@ namespace Models
         [MaxLength(30)]
         public string Prezime { get; set; }
 
-        [Range(0, 10000)]
-        public int Iskustvo { get; set; }
+        [Range(0, 10)]
+        public float Ocena { get; set; }
 
         public virtual List<Aktivnost> Aktivnosti { get; set; }
     }

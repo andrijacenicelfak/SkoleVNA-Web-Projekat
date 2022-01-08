@@ -1,10 +1,10 @@
 
 export class Nastavnik {
-    constructor(ID, Ime, Prezime, Iskustvo, BrojAktivnosti) {
+    constructor(ID, Ime, Prezime, Ocena, BrojAktivnosti) {
         this.ID = ID;
         this.Ime = Ime;
         this.Prezime = Prezime;
-        this.Iskustvo = Iskustvo;
+        this.Ocena = Ocena;
         this.BrojAktivnosti = BrojAktivnosti;
     }
 }

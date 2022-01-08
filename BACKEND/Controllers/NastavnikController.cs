@@ -19,6 +19,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         {
             Context = context;
         }
+        [EnableCors("CORS")]
         [HttpGet]
         [Route("VratiNastavnika/{NastavnikID}")]
 
@@ -31,7 +32,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                     n.ID,
                     n.Ime,
                     n.Prezime,
-                    n.Iskustvo
+                    n.Ocena
                 }).FirstOrDefaultAsync());
             }
             catch (Exception e)
@@ -40,18 +41,19 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
             }
         }
         [HttpGet]
+        [EnableCors("CORS")]
         [Route("VratiNastavnike/{SkolaID}")]
         public async Task<ActionResult> VratiNastavnike(int SkolaID)
         {
             try
             {
-                //var nastavnici = await Context.Nastavnici.Select(p => new { p.ID, p.Ime, p.Prezime, p.Iskustvo, brojAktivnosti = p.Aktivnosti.Count() }).ToListAsync();
+                //var nastavnici = await Context.Nastavnici.Select(p => new { p.ID, p.Ime, p.Prezime, p.Ocena, brojAktivnosti = p.Aktivnosti.Count() }).ToListAsync();
                 var nastavnici = await Context.Nastavnici.Include(p => p.Aktivnosti).Where(p => p.Aktivnosti.Any(akt => akt.Skola.ID == SkolaID) || p.Aktivnosti.Count() == 0).Select(
                     p => new
                     {
                         p.ID,
                         p.Ime,
-                        p.Iskustvo,
+                        p.Ocena,
                         p.Prezime,
                         brojAktivnosti = p.Aktivnosti.Count()
                     }
@@ -64,8 +66,9 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
             }
         }
         [HttpPost]
-        [Route("DodajNastavnika/{Ime}/{Prezime}/{Iskustvo}")]
-        public async Task<ActionResult> DodajNastavnika(string Ime, string Prezime, int Iskustvo)
+        [EnableCors("CORS")]
+        [Route("DodajNastavnika/{Ime}/{Prezime}/{Ocena}")]
+        public async Task<ActionResult> DodajNastavnika(string Ime, string Prezime, float Ocena)
         {
             if (string.IsNullOrWhiteSpace(Ime) || Ime.Length > 30)
                 return BadRequest($"Parametar 'Ime ucenika' : {Ime} nije moguc!");
@@ -73,14 +76,14 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
             if (string.IsNullOrWhiteSpace(Prezime) || Prezime.Length > 30)
                 return BadRequest($"Parametar 'Prezime ucenika' : {Prezime} nije moguc!");
 
-            if (Iskustvo < 0 || Iskustvo > 10000)
-                return BadRequest($"Parametar 'Iskustvo' : {Iskustvo} nije moguc!");
+            if (Ocena < 0 || Ocena > 10000)
+                return BadRequest($"Parametar 'Ocena' : {Ocena} nije moguc!");
             try
             {
                 Nastavnik n = new Nastavnik();
                 n.Ime = Ime;
                 n.Prezime = Prezime;
-                n.Iskustvo = Iskustvo;
+                n.Ocena = Ocena;
                 Context.Nastavnici.Add(n);
                 await Context.SaveChangesAsync();
 
@@ -92,14 +95,15 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 return BadRequest(e.Message);
             }
         }
-        [Route("ZameniIskustvo/{NastavnikID}/{Iskustvo}")]
+        [EnableCors("CORS")]
+        [Route("ZameniOcena/{NastavnikID}/{Ocena}")]
         [HttpPut]
-        public async Task<ActionResult> ZameniIskustvo(int NastavnikID, int Iskustvo)
+        public async Task<ActionResult> ZameniOcena(int NastavnikID, float Ocena)
         {
             try
             {
                 var nastavnik = await Context.Nastavnici.Where(p => p.ID == NastavnikID).FirstOrDefaultAsync();
-                nastavnik.Iskustvo = Iskustvo;
+                nastavnik.Ocena = Ocena;
                 Context.Update(nastavnik);
 
                 await Context.SaveChangesAsync();
@@ -112,6 +116,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
             }
         }
         [Route("IzbrisiNastavnika/{NastavnikID}")]
+        [EnableCors("CORS")]
         [HttpDelete]
         public async Task<ActionResult> IzbrisiNastavnika(int NastavnikID)
         {

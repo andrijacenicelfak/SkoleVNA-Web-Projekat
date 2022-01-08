@@ -20,6 +20,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
             Context = context;
         }
 
+        [EnableCors("CORS")]
         [Route("PreuzmiUcenikeUpisaneNaAktivnost/{AktivnostID}")]
         [HttpGet]
         public async Task<ActionResult> PreuzmiUcenikeUpisaneNaAktivnost(int AktivnostID)
@@ -33,7 +34,8 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                     brojTelefonaRoditelja = p.Ucenik.BrojTelefonaRoditelja,
                     ucenikID = p.Ucenik.ID,
                     imeRoditelja = p.Ucenik.ImeRoditelja,
-                    poslednjiDatumPlacanje = p.PoslednjePlacanje.ToShortDateString()
+                    poslednjiDatumPlacanje = p.PoslednjePlacanje.ToShortDateString(),
+                    ocena = p.Ocena
                 });
 
                 return Ok(await nesto.ToListAsync());
@@ -45,6 +47,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
             }
         }
         [HttpPost]
+        [EnableCors("CORS")]
         [Route("/UpisiUcenika/{UcenikID}/{AktivnostID}")]
         public async Task<ActionResult> UpisiUcenika(int UcenikID, int AktivnostID)
         {
@@ -68,6 +71,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
             }
         }
 
+        [EnableCors("CORS")]
         [HttpPut]
         [Route("Uplati/{UcenikID}/{AktivnostID}")]
         public async Task<ActionResult> Uplati(int UcenikID, int AktivnostID)
@@ -87,7 +91,29 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
             }
         }
 
+        [EnableCors("CORS")]
+        [HttpPut]
+        [Route("UpisiOcenu/{UcenikID}/{AktivnostID}/{Ocena}")]
+        public async Task<ActionResult> UpisiOcenu(int UcenikID, int AktivnostID, int Ocena)
+        {
+            try
+            {
+                var poh = await Context.PohadjaAktivnost.Where(p => p.Aktivnost.ID == AktivnostID && p.Ucenik.ID == UcenikID).FirstOrDefaultAsync();
+                if (poh == null)
+                    throw new Exception("Greska, nema takve aktivnosti ili ucenika!");
+                poh.Ocena = Ocena;
+                Context.Update(poh);
+                await Context.SaveChangesAsync();
+                return Ok("Postavljen novi datum placanja!");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
         [HttpGet]
+        [EnableCors("CORS")]
         [Route("VratiUcenikeKojiNisuUpisani")]
         public async Task<ActionResult> VratiUcenikeKojiNisuUpisani()
         {
@@ -103,6 +129,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         }
 
         [HttpDelete]
+        [EnableCors("CORS")]
         [Route("IspisiUcenikaOdAktivnosti/{UcenikID}/{AktivnostID}")]
         public async Task<ActionResult> IspisiUcenikaOdAktivnosti(int UcenikID, int AktivnostID)
         {
@@ -120,5 +147,6 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 return BadRequest(e.Message);
             }
         }
+
     }
 }

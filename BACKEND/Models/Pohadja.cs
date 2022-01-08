@@ -15,7 +15,6 @@ namespace Models
 
         public virtual Aktivnost Aktivnost { get; set; }
 
-        [MaxLength(30)]
         public DateTime PoslednjePlacanje { get; set; }
 
         [Range(1, 5)]

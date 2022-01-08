@@ -20,6 +20,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
             Context = context;
         }
         //OVO MI JE POTREBNO
+        [EnableCors("CORS")]
         [Route("VratiAktivnostiZaSkolu/{SkolaID}")]
         [HttpGet]
         public async Task<ActionResult> VratiAktivnostiZaSkolu(int SkolaID)
@@ -40,6 +41,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 return BadRequest(e.Message);
             }
         }
+        [EnableCors("CORS")]
         [Route("DodajAktivnost/{Naziv}/{Cena}/{IdSkole}/{BrojDana}/{IDNastavnika}")]
         [HttpPost]
         public async Task<ActionResult> DodajAktivnost(string Naziv, int Cena, int IdSkole, int BrojDana, int IDNastavnika)
@@ -69,6 +71,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 return BadRequest(e.Message);
             }
         }
+        [EnableCors("CORS")]
         [Route("ZameniNastavnika/{AktivnostID}/{NastavnikID}")]
         [HttpPut]
         public async Task<ActionResult> ZameniNastavnika(int AktivnostID, int NastavnikID)
@@ -121,7 +124,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 return BadRequest(e.Message);
             }
         }
-       
+
         /*
                         [Route("PreuzmiSveAktivnosti")]
                         [HttpGet]

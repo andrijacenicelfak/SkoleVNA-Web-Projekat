@@ -25,12 +25,15 @@ export class AktivnostForma {
         let selNastavnik = document.getElementById("selectNastavnik");
         let NastavnikID = selNastavnik.options[selNastavnik.selectedIndex].value;
 
-        let Naziv = document.getElementById("aktivnostNaziv").value;
-        let BrojDana = document.getElementById("aktivnostBrojDana").value;
-        let Cena = document.getElementById("aktivnostCena").value;
+        let Naziv = document.getElementById("aktivnostNaziv");
+        let BrojDana = document.getElementById("aktivnostBrojDana");
+        let Cena = document.getElementById("aktivnostCena");
 
-        fetch("https://localhost:5001/Aktivnost/DodajAktivnost/" + Naziv + "/" + Cena + "/" + skolaID + "/" + BrojDana + "/" + NastavnikID, { method: "POST" }).then(p => {
+        fetch("https://localhost:5001/Aktivnost/DodajAktivnost/" + Naziv.value + "/" + Cena.value + "/" + skolaID + "/" + BrojDana.value + "/" + NastavnikID, { method: "POST" }).then(p => {
             this.pribaviAktivnosti();
+            Naziv.value = "";
+            BrojDana.value = "";
+            Cena.value = "";
         });
 
     }
@@ -63,6 +66,19 @@ export class AktivnostForma {
             this.pribaviAktivnosti();
         });
 
+    }
+    upisiOcenuUceniku(AktivnostID) {
+        let ucenikID = document.getElementById("selektovanRed");
+        let ocena = document.getElementById("ocenaUpis");
+        if (ucenikID != null) {
+            fetch("https://localhost:5001/Pohadja/UpisiOcenu/" + ucenikID.value + "/" + AktivnostID + "/" + ocena.value, { method: 'PUT' })
+                .then(p => {
+                    this.nadjiUcenikeUpisaneNaAktivnost(AktivnostID);
+                    ocena.value = "";
+                });
+        } else {
+            window.alert("Selektuj ucenika prvo!");
+        }
     }
     obrisiAktivnost(AktivnostID) {
         console.log("BRISEM AKTIVNOST " + AktivnostID);
@@ -105,7 +121,7 @@ export class AktivnostForma {
         fetch("https://localhost:5001/Pohadja/PreuzmiUcenikeUpisaneNaAktivnost/" + idAktivnosti).then(p => {
             p.json().then(ucenici => {
                 ucenici.forEach(ucenik => {
-                    let uc = new Ucenik(ucenik.ucenikID, ucenik.ime, ucenik.prezime, ucenik.brojTelefonaRoditelja, ucenik.imeRoditelja, idAktivnosti, ucenik.poslednjiDatumPlacanje);
+                    let uc = new Ucenik(ucenik.ucenikID, ucenik.ime, ucenik.prezime, ucenik.brojTelefonaRoditelja, ucenik.imeRoditelja, idAktivnosti, ucenik.poslednjiDatumPlacanje, ucenik.ocena);
                     this.listaUcenika.push(uc);
                     //console.log(uc);
                 });
@@ -116,7 +132,7 @@ export class AktivnostForma {
 
     }
     updateListuUcenika() {
-        let tabelaUcenika = document.getElementsByClassName("tabela").item(0);
+        let tabelaUcenika = document.getElementById("tabela");
         removeAllChildNodes(tabelaUcenika);
 
         //Brise se sve iza tabele, cak i zaglavlja pa moramo da ponovo dodamo
@@ -135,6 +151,7 @@ export class AktivnostForma {
                         p.className = "redUTabeli";
                 });
                 red.classList += " selektovanRed";
+                red.id = "selektovanRed";
             });
 
             tabelaUcenika.appendChild(red);
@@ -149,6 +166,12 @@ export class AktivnostForma {
             let prezime = document.createElement("td");
             prezime.innerHTML = ucenik.Prezime;
             red.appendChild(prezime);
+
+            //Ocena
+
+            let ocena = document.createElement("td");
+            ocena.innerHTML = ucenik.Ocena;
+            red.appendChild(ocena);
 
             //Ime roditelja
 
@@ -276,7 +299,7 @@ export class AktivnostForma {
         */
     }
     uplatiZaUcenika(aktivnostID) {
-        let ucenikID = document.getElementsByClassName("selektovanRed").item(0);
+        let ucenikID = document.getElementById("selektovanRed");
         if (ucenikID != null) {
             fetch("https://localhost:5001/Pohadja/Uplati/" + ucenikID.value + "/" + aktivnostID, { method: 'PUT' })
                 .then(p => { this.nadjiUcenikeUpisaneNaAktivnost(aktivnostID); });
@@ -285,7 +308,7 @@ export class AktivnostForma {
         }
     }
     ispisiUcenika(aktivnostID) {
-        let ucenikID = document.getElementsByClassName("selektovanRed").item(0);
+        let ucenikID = document.getElementById("selektovanRed");
         if (ucenikID != null) {
             if (confirm("Da li stvarno zelis da ispises ucenika?")) {
                 fetch("https://localhost:5001/Pohadja/IspisiUcenikaOdAktivnosti/" + ucenikID.value + "/" + aktivnostID, { method: 'DELETE' })
@@ -315,6 +338,12 @@ export class AktivnostForma {
         el.innerHTML = "Prezime"
         red.appendChild(el);
 
+        //Ocena
+
+        el = document.createElement("th");
+        el.innerHTML = "Ocena"
+        red.appendChild(el);
+
         //Ime roditelja
 
         el = document.createElement("th");
@@ -335,7 +364,9 @@ export class AktivnostForma {
     }
     dodajTabelu(divTabela) {
         let tabela = document.createElement("table");
-        tabela.classList += "tabela";
+
+        tabela.className = "tabela";
+        tabela.id = "tabela";
         divTabela.appendChild(tabela);
 
         this.dodajZaglavljaTabeli(tabela);
@@ -380,6 +411,9 @@ export class AktivnostForma {
         host.appendChild(kreirajDivButton("btnKontrola", "Ispisi sa aktivnosti", "divKontrola", (ev) => {
             this.ispisiUcenika(selectAktivnosti.options[selectAktivnosti.selectedIndex].value);
         }));
+
+        host.appendChild(kreirajDivTextITextBox("Ocena", "lbKontrola", "tbxKontrola", "number", "ocenaUpis", "divKontrola"));
+        host.appendChild(kreirajDivButton("btnKontrola", "Upisi Ocenu", "divKontrola", (ev) => { this.upisiOcenuUceniku(selectAktivnosti.options[selectAktivnosti.selectedIndex].value); }));
 
         host.appendChild(kreirajDiviLabel("divKontrolaNaslov", "Aktivnosti", "lblKontrola lblKontrolaNaslov"));
 

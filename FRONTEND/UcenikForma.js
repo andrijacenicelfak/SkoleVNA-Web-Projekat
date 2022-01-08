@@ -40,7 +40,7 @@ export class UcenikForma {
         this.listaUcenika.length = 0;
         fetch("https://localhost:5001/Pohadja/VratiUcenikeKojiNisuUpisani").then(p => p.json().then(ucenici => {
             ucenici.forEach(ucenik => {
-                let uc = new Ucenik(ucenik.id, ucenik.ime, ucenik.prezime, ucenik.brojTelefonaRoditelja, ucenik.imeRoditelja, -1, "");
+                let uc = new Ucenik(ucenik.id, ucenik.ime, ucenik.prezime, ucenik.brojTelefonaRoditelja, ucenik.imeRoditelja, -1, "", 0);
                 this.listaUcenika.push(uc);
             });
             this.updateTabeluUcenika();
@@ -83,7 +83,7 @@ export class UcenikForma {
                 } else {
                     p.json().then(ucenik => {
                         this.listaUcenika.length = 0;
-                        this.listaUcenika.push(new Ucenik(ucenik.id, ucenik.ime, ucenik.prezime, ucenik.brojTelefonaRoditelja, ucenik.imeRoditelja, -1, ""));
+                        this.listaUcenika.push(new Ucenik(ucenik.id, ucenik.ime, ucenik.prezime, ucenik.brojTelefonaRoditelja, ucenik.imeRoditelja, -1, "", 0));
                         this.updateTabeluUcenika();
                     });
                 }

@@ -20,26 +20,6 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         {
             Context = context;
         }
-        /*
-        ///<summary>
-        /// Preuzima sve ucenike sa svim aktivnostima
-        ///</summary>
-        [Route("PreuzmiUcenike")]
-        [HttpGet]
-        public async Task<ActionResult> PreuzmiUcenike()
-        {
-            try
-            {
-                var ucenici = Context.Ucenici;
-
-                return Ok(await ucenici.ToListAsync());
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-*/
         ///<summary>
         /// Dodaje ucenika u bazu
         ///</summary>
@@ -85,6 +65,8 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
 
         [HttpGet]
         [Route("PretraziUcenike/{BrojTelefonaRoditelja}")]
+        [EnableCors("CORS")]
+
         public async Task<ActionResult> PretraziUcenike(string BrojTelefonaRoditelja)
         {
             bool onlyDig = true;
@@ -112,6 +94,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
             }
         }
         [HttpDelete]
+        [EnableCors("CORS")]
         [Route("ObrisiUcenika/{UcenikID}")]
         public async Task<ActionResult> ObrisiUcenika(int UcenikID)
         {

@@ -21,13 +21,13 @@ export class NastavnikForma {
             }
         });
     }
-    zameniIskustvo() {
-        let tbxIskustvo = document.getElementById("iskustvoNastavnikaNovo");
-        let iskustvo = tbxIskustvo.value;
-        tbxIskustvo.value = "";
+    zameniOcena() {
+        let tbxOcena = document.getElementById("OcenaNastavnikaNovo");
+        let Ocena = tbxOcena.value;
+        tbxOcena.value = "";
         let NastavnikID = document.getElementById("selektovanRed").value;
 
-        fetch("https://localhost:5001/Nastavnik/ZameniIskustvo/" + NastavnikID + "/" + iskustvo, { method: "PUT" }).then(p => {
+        fetch("https://localhost:5001/Nastavnik/ZameniOcena/" + NastavnikID + "/" + Ocena, { method: "PUT" }).then(p => {
             this.pribaviNastavnike();
         });
     }
@@ -38,7 +38,7 @@ export class NastavnikForma {
         fetch("https://localhost:5001/Nastavnik/VratiNastavnike/" + skolaID).then(p => {
             p.json().then(nastavnici => {
                 nastavnici.forEach(nastavnik => {
-                    this.listaNastavnika.push(new Nastavnik(nastavnik.id, nastavnik.ime, nastavnik.prezime, nastavnik.iskustvo, nastavnik.brojAktivnosti));
+                    this.listaNastavnika.push(new Nastavnik(nastavnik.id, nastavnik.ime, nastavnik.prezime, nastavnik.ocena, nastavnik.brojAktivnosti));
 
                 });
                 this.updateTabelu();
@@ -48,18 +48,18 @@ export class NastavnikForma {
     dodajNastavnika() {
         let ime = document.getElementById("imeNastavnika").value;
         let prezime = document.getElementById("prezimeNastavnika").value;
-        let iskustvo = document.getElementById("iskustvoNastavnika").value;
+        let Ocena = document.getElementById("OcenaNastavnika").value;
         document.getElementById("imeNastavnika").value = "";
         document.getElementById("prezimeNastavnika").value = "";
-        document.getElementById("iskustvoNastavnika").value = "";
-        fetch("https://localhost:5001/Nastavnik/DodajNastavnika/" + ime + "/" + prezime + "/" + iskustvo, { method: "POST" }).then(p => { this.pribaviNastavnike(); });
+        document.getElementById("OcenaNastavnika").value = "";
+        fetch("https://localhost:5001/Nastavnik/DodajNastavnika/" + ime + "/" + prezime + "/" + Ocena, { method: "POST" }).then(p => { this.pribaviNastavnike(); });
     }
 
     crtajDivDodaj(host) {
         host.appendChild(kreirajDiviLabel("divKontrolaNaslov", "Dodaj novog Nastavnika", "lblKontrola lblKontrolaNaslov"));
         host.appendChild(kreirajDivTextITextBox("Ime", "lblKontrola", "tbxKontrola", "text", "imeNastavnika", "divKontrola"));
         host.appendChild(kreirajDivTextITextBox("Prezime", "lblKontrola", "tbxKontrola", "text", "prezimeNastavnika", "divKontrola"));
-        host.appendChild(kreirajDivTextITextBox("Iskustvo", "lblKontrola", "tbxKontrola", "number", "iskustvoNastavnika", "divKontrola"));
+        host.appendChild(kreirajDivTextITextBox("Ocena", "lblKontrola", "tbxKontrola", "number", "OcenaNastavnika", "divKontrola"));
         host.appendChild(kreirajDivButton("btnKontrola", "Dodaj Nastavnika", "divKontrola", (ev) => { this.dodajNastavnika(); }));
     }
 
@@ -101,10 +101,10 @@ export class NastavnikForma {
             prezime.innerHTML = nastavnik.Prezime;
             red.appendChild(prezime);
 
-            //Iskustvo
+            //Ocena
 
             let irod = document.createElement("td");
-            irod.innerHTML = nastavnik.Iskustvo / 1000;
+            irod.innerHTML = nastavnik.Ocena;
             red.appendChild(irod);
 
             //Broj Aktivnosti
@@ -141,10 +141,10 @@ export class NastavnikForma {
         el.innerHTML = "Prezime"
         red.appendChild(el);
 
-        //Iskustvo
+        //Ocena
 
         el = document.createElement("th");
-        el.innerHTML = "Iskustvo (x / 10)"
+        el.innerHTML = "Ocena (x / 10)"
         red.appendChild(el);
 
         //Broj aktivnosti
@@ -154,8 +154,8 @@ export class NastavnikForma {
         red.appendChild(el);
     }
     crtajKontrolu(host) {
-        host.appendChild(kreirajDivTextITextBox("Iskustvo", "lblKontrola", "tbxKontrola", "number", "iskustvoNastavnikaNovo", "divKontrola"));
-        host.appendChild(kreirajDivButton("btnKontrola", "Zameni Iskustvo", "divKontrola", (e) => { this.zameniIskustvo(); }));
+        host.appendChild(kreirajDivTextITextBox("Ocena", "lblKontrola", "tbxKontrola", "number", "OcenaNastavnikaNovo", "divKontrola"));
+        host.appendChild(kreirajDivButton("btnKontrola", "Zameni Ocena", "divKontrola", (e) => { this.zameniOcena(); }));
         host.appendChild(kreirajDivButton("btnKontrola", "Izbrisi Nastavnika", "divKontrola", (e) => { this.izbrisiNastavnika(); }))
     }
     crtaj(host) {

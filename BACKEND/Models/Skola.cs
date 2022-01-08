@@ -19,6 +19,5 @@ namespace Models
 
         public virtual List<Aktivnost> Aktivnosti { get; set; }
 
-        //public virtual List<Ucenik> Ucenici { get; set; }
     }
 }

@@ -19,7 +19,8 @@ namespace Models
         public string Prezime { get; set; }
 
         [Required]
-        [MaxLength(30)]
+        [MaxLength(13)]
+        [RegularExpression("\\d+")]
         public string BrojTelefonaRoditelja { get; set; }
 
         [MaxLength(30)]
