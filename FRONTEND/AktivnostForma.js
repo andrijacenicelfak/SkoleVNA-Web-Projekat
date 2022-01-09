@@ -44,7 +44,7 @@ export class AktivnostForma {
         fetch("https://localhost:5001/Nastavnik/VratiNastavnike/" + skolaID).then(p => {
             p.json().then(nastavnici => {
                 nastavnici.forEach(nastavnik => {
-                    this.listaNastavnika.push(new Nastavnik(nastavnik.id, nastavnik.ime, nastavnik.prezime, nastavnik.iskustvo, nastavnik.brojAktivnosti));
+                    this.listaNastavnika.push(new Nastavnik(nastavnik.id, nastavnik.ime, nastavnik.prezime, nastavnik.ocena, nastavnik.brojAktivnosti));
 
                 });
                 let selNastavnik = document.getElementById("selectNastavnik");
@@ -80,9 +80,6 @@ export class AktivnostForma {
             window.alert("Selektuj ucenika prvo!");
         }
     }
-    obrisiAktivnost(AktivnostID) {
-        console.log("BRISEM AKTIVNOST " + AktivnostID);
-    }
     updateListuAktivnosti() {
         let selectAktivnost = document.getElementById("selectAktivnost");
         removeAllChildNodes(selectAktivnost);
@@ -108,7 +105,6 @@ export class AktivnostForma {
                 aktivnosti.forEach(a => {
                     let akt = new Aktivnost(a.aktivnostID, a.aktivnostNaziv, a.aktivnostCena, a.nastavnikID, a.aktivnostBrojDana);
                     this.listaAktivnosti.push(akt);
-                    //console.log(akt);
                 });
                 this.updateListuAktivnosti();
                 this.updateInfo();
@@ -123,7 +119,6 @@ export class AktivnostForma {
                 ucenici.forEach(ucenik => {
                     let uc = new Ucenik(ucenik.ucenikID, ucenik.ime, ucenik.prezime, ucenik.brojTelefonaRoditelja, ucenik.imeRoditelja, idAktivnosti, ucenik.poslednjiDatumPlacanje, ucenik.ocena);
                     this.listaUcenika.push(uc);
-                    //console.log(uc);
                 });
                 this.updateListuUcenika();
                 this.updateInfo();
@@ -170,7 +165,11 @@ export class AktivnostForma {
             //Ocena
 
             let ocena = document.createElement("td");
-            ocena.innerHTML = ucenik.Ocena;
+            if (ucenik.Ocena === 0) {
+                ocena.innerHTML = "Nije ocenjen!";
+            } else {
+                ocena.innerHTML = ucenik.Ocena;
+            }
             red.appendChild(ocena);
 
             //Ime roditelja
@@ -272,20 +271,20 @@ export class AktivnostForma {
         lblNastavnikPrezime.innerHTML = this.nastavnik.Prezime;
         prezimeDiv.appendChild(lblNastavnikPrezime);
 
-        let iskustvoDiv = document.createElement("div");
-        iskustvoDiv.className = "divKontrola";
-        kontrola.appendChild(iskustvoDiv);
+        let ocenaDiv = document.createElement("div");
+        ocenaDiv.className = "divKontrola";
+        kontrola.appendChild(ocenaDiv);
 
-        let lblIskustvo = document.createElement("label");
-        lblIskustvo.className = "lblKontrola";
-        lblIskustvo.innerHTML = "Iskustvo: "
-        iskustvoDiv.appendChild(lblIskustvo);
+        let lblocena = document.createElement("label");
+        lblocena.className = "lblKontrola";
+        lblocena.innerHTML = "ocena: "
+        ocenaDiv.appendChild(lblocena);
 
-        let lblNastavnikIskustvo = document.createElement("label");
-        lblNastavnikIskustvo.className = "lblKontrola";
-        lblNastavnikIskustvo.id = "iskustvoNastavnik";
-        lblNastavnikIskustvo.innerHTML = this.nastavnik.Iskustvo / 1000 + "  /10";
-        iskustvoDiv.appendChild(lblNastavnikIskustvo);
+        let lblNastavnikocena = document.createElement("label");
+        lblNastavnikocena.className = "lblKontrola";
+        lblNastavnikocena.id = "ocenaNastavnik";
+        lblNastavnikocena.innerHTML = this.nastavnik.ocena + "  /10";
+        ocenaDiv.appendChild(lblNastavnikocena);
 
 
         /*
@@ -383,7 +382,7 @@ export class AktivnostForma {
                 this.nastavnik.ID = n.id;
                 this.nastavnik.Ime = n.ime;
                 this.nastavnik.Prezime = n.prezime;
-                this.nastavnik.Iskustvo = n.iskustvo;
+                this.nastavnik.ocena = n.ocena;
                 this.dodajInfo();
             });
 
@@ -397,8 +396,8 @@ export class AktivnostForma {
         let prezime = document.getElementById("prezimeNastavnik");
         prezime.innerHTML = this.nastavnik.Prezime;
 
-        let isk = document.getElementById("iskustvoNastavnik");
-        isk.innerHTML = this.nastavnik.Iskustvo / 1000 + "/ 10";
+        let isk = document.getElementById("ocenaNastavnik");
+        isk.innerHTML = this.nastavnik.ocena + "/ 10";
     }
 
     dodajInfoKontrolu(host) {
@@ -437,7 +436,6 @@ export class AktivnostForma {
         host.appendChild(divSelNastavnik);
 
         host.appendChild(kreirajDivDvaDugmeta("divKontrola", "btnKontrola", "Dodaj Aktivnost", (e) => { this.dodajAktivnost(); }, "btnKontrola", "Zameni Nastavnika Trenutnoj Aktivnosti", (e) => { this.zameniNastavnikaTr(selectAktivnosti.options[selectAktivnosti.selectedIndex].value); }));
-        //this.obrisiAktivnost(aktivnostID); 
         host.appendChild(kreirajDivButton("btnKontrola", "Izbrisi Aktivnost", "divKontrola", (e) => { this.izbrisiAktivnost(selectAktivnosti.options[selectAktivnosti.selectedIndex].value); }));
         this.pribaviNastavnike();
     }

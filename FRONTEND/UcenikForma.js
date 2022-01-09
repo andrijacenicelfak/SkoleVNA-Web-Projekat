@@ -81,10 +81,13 @@ export class UcenikForma {
                 if (p.status === 204) {
                     window.alert("Nema takvog ucenika!");
                 } else {
-                    p.json().then(ucenik => {
+                    p.json().then(ucenici => {
                         this.listaUcenika.length = 0;
-                        this.listaUcenika.push(new Ucenik(ucenik.id, ucenik.ime, ucenik.prezime, ucenik.brojTelefonaRoditelja, ucenik.imeRoditelja, -1, "", 0));
-                        this.updateTabeluUcenika();
+
+                        ucenici.forEach(ucenik => {
+                            this.listaUcenika.push(new Ucenik(ucenik.id, ucenik.ime, ucenik.prezime, ucenik.brojTelefonaRoditelja, ucenik.imeRoditelja, -1, "", 0));
+                            this.updateTabeluUcenika();
+                        });
                     });
                 }
             });

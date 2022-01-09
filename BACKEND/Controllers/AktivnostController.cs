@@ -124,23 +124,5 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 return BadRequest(e.Message);
             }
         }
-
-        /*
-                        [Route("PreuzmiSveAktivnosti")]
-                        [HttpGet]
-
-                        public async Task<ActionResult> PreuzmiSveAktivnosti()
-                        {
-                            try
-                            {
-                                var akt = Context.Aktivnosti.Select(p => new { p.Naziv, p.BrojDanaUNedelji, p.Cena, p.ID, skolaID = p.Skola.ID });
-
-                                return Ok(await akt.ToListAsync());
-                            }
-                            catch (Exception e)
-                            {
-                                return BadRequest(e.Message);
-                            }
-                        }*/
     }
 }

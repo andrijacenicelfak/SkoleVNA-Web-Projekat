@@ -85,7 +85,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
             try
             {
 
-                var ucenik = await Context.Ucenici.Where(p => p.BrojTelefonaRoditelja.Equals(BrojTelefonaRoditelja)).FirstOrDefaultAsync();
+                var ucenik = await Context.Ucenici.Where(p => p.BrojTelefonaRoditelja.Equals(BrojTelefonaRoditelja)).ToListAsync();
                 return Ok(ucenik);
             }
             catch (Exception e)
