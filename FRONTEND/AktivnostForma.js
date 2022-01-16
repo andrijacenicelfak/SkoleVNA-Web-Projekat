@@ -5,6 +5,7 @@ import { kreirajDiviLabel, kreirajDivTextITextBox } from "./funkcije.js";
 import { kreirajDivButton } from "./funkcije.js";
 import { removeAllChildNodes } from "./funkcije.js";
 import { kreirajDivDvaDugmeta } from "./funkcije.js";
+import { kreirajDivSaLbliLblSaIDjem } from "./funkcije.js";
 
 export class AktivnostForma {
     constructor() {
@@ -15,7 +16,12 @@ export class AktivnostForma {
     }
     izbrisiAktivnost(AktivnostID) {
         if (confirm("Stvarno zelis da obrises ovu aktivnost?")) {
-            fetch("https://localhost:5001/Aktivnost/ObrisiAktivnost/" + AktivnostID, { method: "DELETE" }).then(p => { this.pribaviAktivnosti(); });
+            fetch("https://localhost:5001/Aktivnost/ObrisiAktivnost/" + AktivnostID, { method: "DELETE" }).then(p => {
+                if (!p.ok) {
+                    window.alert("Nije moguce obrisati aktivnost!");
+                }
+                this.pribaviAktivnosti();
+            });
         }
     }
     dodajAktivnost() {
@@ -30,6 +36,9 @@ export class AktivnostForma {
         let Cena = document.getElementById("aktivnostCena");
 
         fetch("https://localhost:5001/Aktivnost/DodajAktivnost/" + Naziv.value + "/" + Cena.value + "/" + skolaID + "/" + BrojDana.value + "/" + NastavnikID, { method: "POST" }).then(p => {
+            if (!p.ok) {
+                window.alert("Nije moguce dodati aktivnost!");
+            }
             this.pribaviAktivnosti();
             Naziv.value = "";
             BrojDana.value = "";
@@ -42,27 +51,34 @@ export class AktivnostForma {
         let skolaID = slSkole.options[slSkole.selectedIndex].value;
         this.listaNastavnika.length = 0;
         fetch("https://localhost:5001/Nastavnik/VratiNastavnike/" + skolaID).then(p => {
-            p.json().then(nastavnici => {
-                nastavnici.forEach(nastavnik => {
-                    this.listaNastavnika.push(new Nastavnik(nastavnik.id, nastavnik.ime, nastavnik.prezime, nastavnik.ocena, nastavnik.brojAktivnosti));
+            if (!p.ok) {
+                window.alert("Nije moguce pribaviti nastavnike!");
+            } else {
+                p.json().then(nastavnici => {
+                    nastavnici.forEach(nastavnik => {
+                        this.listaNastavnika.push(new Nastavnik(nastavnik.id, nastavnik.ime, nastavnik.prezime, nastavnik.ocena, nastavnik.brojAktivnosti));
 
+                    });
+                    let selNastavnik = document.getElementById("selectNastavnik");
+                    removeAllChildNodes(selNastavnik);
+                    this.listaNastavnika.forEach(nastavnik => {
+                        let nop = document.createElement("option");
+                        nop.innerHTML = nastavnik.Ime + " " + nastavnik.Prezime;
+                        nop.value = nastavnik.ID;
+                        selNastavnik.appendChild(nop);
+                    });
                 });
-                let selNastavnik = document.getElementById("selectNastavnik");
-                removeAllChildNodes(selNastavnik);
-                this.listaNastavnika.forEach(nastavnik => {
-                    let nop = document.createElement("option");
-                    nop.innerHTML = nastavnik.Ime + " " + nastavnik.Prezime;
-                    nop.value = nastavnik.ID;
-                    selNastavnik.appendChild(nop);
-                });
-            });
-        })
+            }
+        });
     }
     zameniNastavnikaTr(AktivnostID) {
         let selNastavnik = document.getElementById("selectNastavnik");
         let NastavnikID = selNastavnik.options[selNastavnik.selectedIndex].value;
 
         fetch("https://localhost:5001/Aktivnost/ZameniNastavnika/" + AktivnostID + "/" + NastavnikID, { method: "PUT" }).then(p => {
+            if (!p.ok) {
+                window.alert("Nijem oguce zameniti trenutnog nastavnika!");
+            }
             this.pribaviAktivnosti();
         });
 
@@ -73,12 +89,104 @@ export class AktivnostForma {
         if (ucenikID != null) {
             fetch("https://localhost:5001/Pohadja/UpisiOcenu/" + ucenikID.value + "/" + AktivnostID + "/" + ocena.value, { method: 'PUT' })
                 .then(p => {
+                    if (!p.ok) {
+                        window.alert("Nije moguce upisati ocenu uceniku!");
+                    }
                     this.nadjiUcenikeUpisaneNaAktivnost(AktivnostID);
                     ocena.value = "";
                 });
         } else {
             window.alert("Selektuj ucenika prvo!");
         }
+    }
+    pribaviAktivnosti() {
+        let slSkole = document.getElementById("selectSkole");
+        let skolaID = slSkole.options[slSkole.selectedIndex].value;
+        this.listaAktivnosti.length = 0;
+
+        fetch("https://localhost:5001/Aktivnost/VratiAktivnostiZaSkolu/" + skolaID).then(p => {
+            p.json().then(aktivnosti => {
+                if (!p.ok) {
+                    window.alert("Nije moguce privaviti aktivnosti!");
+                } else {
+                    aktivnosti.forEach(a => {
+                        let akt = new Aktivnost(a.aktivnostID, a.aktivnostNaziv, a.aktivnostCena, a.nastavnikID, a.aktivnostBrojDana);
+                        this.listaAktivnosti.push(akt);
+                    });
+                    this.updateListuAktivnosti();
+                    this.updateInfo();
+                }
+            });
+        });
+
+    }
+    nadjiUcenikeUpisaneNaAktivnost(idAktivnosti) {
+        this.listaUcenika.length = 0;
+        fetch("https://localhost:5001/Pohadja/PreuzmiUcenikeUpisaneNaAktivnost/" + idAktivnosti).then(p => {
+            p.json().then(ucenici => {
+                if (!p.ok) {
+                    window.alert("Nije moguce pribaviti ucenike!");
+                } else {
+                    ucenici.forEach(ucenik => {
+                        let uc = new Ucenik(ucenik.ucenikID, ucenik.ime, ucenik.prezime, ucenik.brojTelefonaRoditelja, ucenik.imeRoditelja, idAktivnosti, ucenik.poslednjiDatumPlacanje, ucenik.ocena);
+                        this.listaUcenika.push(uc);
+                    });
+                    this.updateListuUcenika();
+                    this.updateInfo();
+                }
+            });
+        });
+
+    }
+    uplatiZaUcenika(aktivnostID) {
+        let ucenikID = document.getElementById("selektovanRed");
+        if (ucenikID != null) {
+            fetch("https://localhost:5001/Pohadja/Uplati/" + ucenikID.value + "/" + aktivnostID, { method: 'PUT' })
+                .then(p => {
+                    if (!p.ok) {
+                        window.alert("Nije moguce uplatiti aktivnost za ucenika!");
+                    }
+                    this.nadjiUcenikeUpisaneNaAktivnost(aktivnostID);
+                });
+        } else {
+            window.alert("Selektuj ucenika prvo!");
+        }
+    }
+    ispisiUcenika(aktivnostID) {
+        let ucenikID = document.getElementById("selektovanRed");
+        if (ucenikID != null) {
+            if (confirm("Da li stvarno zelis da ispises ucenika?")) {
+                fetch("https://localhost:5001/Pohadja/IspisiUcenikaOdAktivnosti/" + ucenikID.value + "/" + aktivnostID, { method: 'DELETE' })
+                    .then(p => {
+                        if (!p.ok) {
+                            window.alert("Nije moguce ispisati ucenika!");
+                        }
+                        this.nadjiUcenikeUpisaneNaAktivnost(aktivnostID);
+                    });
+            }
+        } else {
+            window.alert("Selektuj ucenika prvo!");
+        }
+    }
+    updateInfo() {
+        let selectAktivnost = document.getElementById("selectAktivnost");
+        let index = selectAktivnost.selectedIndex;
+        let aktivnost = this.listaAktivnosti[index];
+
+        fetch("https://localhost:5001/Nastavnik/VratiNastavnika/" + aktivnost.NastavnikID).then(p => {
+            if (!p.ok) {
+                window.alert("Nije moguce pribaviti nastavnika!");
+            } else {
+                p.json().then(n => {
+                    this.nastavnik.ID = n.id;
+                    this.nastavnik.Ime = n.ime;
+                    this.nastavnik.Prezime = n.prezime;
+                    this.nastavnik.ocena = n.ocena;
+                    this.dodajInfo();
+                });
+            }
+        });
+
     }
     updateListuAktivnosti() {
         let selectAktivnost = document.getElementById("selectAktivnost");
@@ -93,38 +201,6 @@ export class AktivnostForma {
         this.nadjiUcenikeUpisaneNaAktivnost(selectAktivnost.options[selectAktivnost.selectedIndex].value);
         this.updateInfoNastavnik();
         this.updateInfo();
-    }
-
-    pribaviAktivnosti() {
-        let slSkole = document.getElementById("selectSkole");
-        let skolaID = slSkole.options[slSkole.selectedIndex].value;
-        this.listaAktivnosti.length = 0;
-
-        fetch("https://localhost:5001/Aktivnost/VratiAktivnostiZaSkolu/" + skolaID).then(p => {
-            p.json().then(aktivnosti => {
-                aktivnosti.forEach(a => {
-                    let akt = new Aktivnost(a.aktivnostID, a.aktivnostNaziv, a.aktivnostCena, a.nastavnikID, a.aktivnostBrojDana);
-                    this.listaAktivnosti.push(akt);
-                });
-                this.updateListuAktivnosti();
-                this.updateInfo();
-            });
-        });
-
-    }
-    nadjiUcenikeUpisaneNaAktivnost(idAktivnosti) {
-        this.listaUcenika.length = 0;
-        fetch("https://localhost:5001/Pohadja/PreuzmiUcenikeUpisaneNaAktivnost/" + idAktivnosti).then(p => {
-            p.json().then(ucenici => {
-                ucenici.forEach(ucenik => {
-                    let uc = new Ucenik(ucenik.ucenikID, ucenik.ime, ucenik.prezime, ucenik.brojTelefonaRoditelja, ucenik.imeRoditelja, idAktivnosti, ucenik.poslednjiDatumPlacanje, ucenik.ocena);
-                    this.listaUcenika.push(uc);
-                });
-                this.updateListuUcenika();
-                this.updateInfo();
-            });
-        });
-
     }
     updateListuUcenika() {
         let tabelaUcenika = document.getElementById("tabela");
@@ -212,112 +288,19 @@ export class AktivnostForma {
         }
         aktivnostSelectDiv.appendChild(selectAktivnosti);
 
-        let divBrojDana = document.createElement("div");
-        divBrojDana.className = "divKontrola";
+        kontrola.appendChild(kreirajDivSaLbliLblSaIDjem("divKontrola", "Broj dana :", "lblBrojDanaAktivnost", "lblKontrola"));
 
-        let lblBrDana = document.createElement("label");
-        lblBrDana.className = "lblKontrola";
-        lblBrDana.innerHTML = "Broj dana :";
-        divBrojDana.appendChild(lblBrDana);
-
-        let lblBrDanaAkt = document.createElement("label");
-        lblBrDanaAkt.className = "lblKontrola";
-        lblBrDanaAkt.id = "lblBrojDanaAktivnost";
-        divBrojDana.appendChild(lblBrDanaAkt);
-
-        kontrola.appendChild(divBrojDana);
-
-        let divCena = document.createElement("div");
-        divCena.className = "divKontrola";
-
-        let lblCena = document.createElement("label");
-        lblCena.className = "lblKontrola";
-        lblCena.innerHTML = "Cena :";
-        divCena.appendChild(lblCena);
-
-        let lblCenaAkt = document.createElement("label");
-        lblCenaAkt.className = "lblKontrola";
-        lblCenaAkt.id = "lblCenaAkt";
-        divCena.appendChild(lblCenaAkt);
-
-        kontrola.appendChild(divCena);
+        kontrola.appendChild(kreirajDivSaLbliLblSaIDjem("divKontrola", "Cena :", "lblCenaAkt", "lblKontrola"));
 
         kontrola.appendChild(kreirajDiviLabel("divKontrolaNaslov", "Nastavnik", "lblKontrola lblKontrolaNaslov"));
 
-        let imeDiv = document.createElement("div");
-        imeDiv.className = "divKontrola";
-        kontrola.appendChild(imeDiv);
-        let lblIme = document.createElement("label");
-        lblIme.innerHTML = "Ime : ";
-        imeDiv.appendChild(lblIme);
-        lblIme.className = "lblKontrola";
-        let lblNastavnikIme = document.createElement("label");
-        lblNastavnikIme.id = "imeNastavnik";
-        lblNastavnikIme.className = "lblKontrola"
-        lblNastavnikIme.innerHTML = this.nastavnik.Ime;
-        imeDiv.appendChild(lblNastavnikIme);
+        kontrola.appendChild(kreirajDivSaLbliLblSaIDjem("divKontrola", "Ime :", "imeNastavnik", "lblKontrola"));
 
-        let prezimeDiv = document.createElement("div");
-        prezimeDiv.className = "divKontrola";
-        kontrola.appendChild(prezimeDiv);
-        let lblPrezime = document.createElement("label");
-        lblPrezime.innerHTML = "Prezime : ";
-        lblPrezime.className = "lblKontrola";
-        prezimeDiv.appendChild(lblPrezime);
+        kontrola.appendChild(kreirajDivSaLbliLblSaIDjem("divKontrola", "Prezime :", "prezimeNastavnik", "lblKontrola"));
 
-        let lblNastavnikPrezime = document.createElement("label");
-        lblNastavnikPrezime.id = "prezimeNastavnik";
-        lblNastavnikPrezime.className = "lblKontrola";
-        lblNastavnikPrezime.innerHTML = this.nastavnik.Prezime;
-        prezimeDiv.appendChild(lblNastavnikPrezime);
+        kontrola.appendChild(kreirajDivSaLbliLblSaIDjem("divKontrola", "Ocena :", "ocenaNastavnik", "lblKontrola"));
 
-        let ocenaDiv = document.createElement("div");
-        ocenaDiv.className = "divKontrola";
-        kontrola.appendChild(ocenaDiv);
-
-        let lblocena = document.createElement("label");
-        lblocena.className = "lblKontrola";
-        lblocena.innerHTML = "ocena: "
-        ocenaDiv.appendChild(lblocena);
-
-        let lblNastavnikocena = document.createElement("label");
-        lblNastavnikocena.className = "lblKontrola";
-        lblNastavnikocena.id = "ocenaNastavnik";
-        lblNastavnikocena.innerHTML = this.nastavnik.ocena + "  /10";
-        ocenaDiv.appendChild(lblNastavnikocena);
-
-
-        /*
-        //Dugme za testiranje
-        let testbtn = document.createElement("button");
-        kontrola.appendChild(testbtn);
-        testbtn.innerHTML = "test";
-        testbtn.onclick = () => {
-            
-        }
-        */
     }
-    uplatiZaUcenika(aktivnostID) {
-        let ucenikID = document.getElementById("selektovanRed");
-        if (ucenikID != null) {
-            fetch("https://localhost:5001/Pohadja/Uplati/" + ucenikID.value + "/" + aktivnostID, { method: 'PUT' })
-                .then(p => { this.nadjiUcenikeUpisaneNaAktivnost(aktivnostID); });
-        } else {
-            window.alert("Selektuj ucenika prvo!");
-        }
-    }
-    ispisiUcenika(aktivnostID) {
-        let ucenikID = document.getElementById("selektovanRed");
-        if (ucenikID != null) {
-            if (confirm("Da li stvarno zelis da ispises ucenika?")) {
-                fetch("https://localhost:5001/Pohadja/IspisiUcenikaOdAktivnosti/" + ucenikID.value + "/" + aktivnostID, { method: 'DELETE' })
-                    .then(p => { this.nadjiUcenikeUpisaneNaAktivnost(aktivnostID); });
-            }
-        } else {
-            window.alert("Selektuj ucenika prvo!");
-        }
-    }
-
     dodajZaglavljaTabeli(tabela) {
         //Napravi zaglavlje
 
@@ -371,24 +354,6 @@ export class AktivnostForma {
         this.dodajZaglavljaTabeli(tabela);
 
     }
-
-    updateInfo() {
-        let selectAktivnost = document.getElementById("selectAktivnost");
-        let index = selectAktivnost.selectedIndex;
-        let aktivnost = this.listaAktivnosti[index];
-
-        fetch("https://localhost:5001/Nastavnik/VratiNastavnika/" + aktivnost.NastavnikID).then(p => {
-            p.json().then(n => {
-                this.nastavnik.ID = n.id;
-                this.nastavnik.Ime = n.ime;
-                this.nastavnik.Prezime = n.prezime;
-                this.nastavnik.ocena = n.ocena;
-                this.dodajInfo();
-            });
-
-        });
-
-    }
     dodajInfo() {
         let ime = document.getElementById("imeNastavnik");
         ime.innerHTML = this.nastavnik.Ime;
@@ -399,7 +364,6 @@ export class AktivnostForma {
         let isk = document.getElementById("ocenaNastavnik");
         isk.innerHTML = this.nastavnik.ocena + "/ 10";
     }
-
     dodajInfoKontrolu(host) {
 
         let selectAktivnosti = document.getElementById("selectAktivnost");
@@ -412,7 +376,7 @@ export class AktivnostForma {
         }));
 
         host.appendChild(kreirajDivTextITextBox("Ocena", "lbKontrola", "tbxKontrola", "number", "ocenaUpis", "divKontrola"));
-        host.appendChild(kreirajDivButton("btnKontrola", "Upisi Ocenu", "divKontrola", (ev) => { this.upisiOcenuUceniku(selectAktivnosti.options[selectAktivnosti.selectedIndex].value); }));
+        host.appendChild(kreirajDivButton("btnKontrola", "Upiši Ocenu", "divKontrola", (ev) => { this.upisiOcenuUceniku(selectAktivnosti.options[selectAktivnosti.selectedIndex].value); }));
 
         host.appendChild(kreirajDiviLabel("divKontrolaNaslov", "Aktivnosti", "lblKontrola lblKontrolaNaslov"));
 
@@ -436,10 +400,9 @@ export class AktivnostForma {
         host.appendChild(divSelNastavnik);
 
         host.appendChild(kreirajDivDvaDugmeta("divKontrola", "btnKontrola", "Dodaj Aktivnost", (e) => { this.dodajAktivnost(); }, "btnKontrola", "Zameni Nastavnika Trenutnoj Aktivnosti", (e) => { this.zameniNastavnikaTr(selectAktivnosti.options[selectAktivnosti.selectedIndex].value); }));
-        host.appendChild(kreirajDivButton("btnKontrola", "Izbrisi Aktivnost", "divKontrola", (e) => { this.izbrisiAktivnost(selectAktivnosti.options[selectAktivnosti.selectedIndex].value); }));
+        host.appendChild(kreirajDivButton("btnKontrola", "Izbriši Aktivnost", "divKontrola", (e) => { this.izbrisiAktivnost(selectAktivnosti.options[selectAktivnosti.selectedIndex].value); }));
         this.pribaviNastavnike();
     }
-
     updateInfoNastavnik() {
         let lblBrDanaAkt = document.getElementById("lblBrojDanaAktivnost");
         let lblCena = document.getElementById("lblCenaAkt");
@@ -449,7 +412,6 @@ export class AktivnostForma {
         lblBrDanaAkt.innerHTML = aktivnost.BrojDanaUNedelji;
         lblCena.innerHTML = aktivnost.Cena;
     }
-
     crtaj(host) {
 
         let kontrola = document.createElement("div");

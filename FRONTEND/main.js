@@ -2,19 +2,14 @@ import { Ucenik } from "./Ucenik.js";
 import { Skola } from "./Skola.js";
 import { AktivnostForma } from "./AktivnostForma.js";
 import { UcenikForma } from "./UcenikForma.js";
-import { kreirajDivButton } from "./funkcije.js";
 import { kreirajOpcijuZaSelekt } from "./funkcije.js";
+import { removeAllChildNodes } from "./funkcije.js";
 import { NastavnikForma } from "./NastavnikForma.js";
 
 let sveSkole = [];
 
 ucitajSkole();
 kreirajStranicu();
-function removeAllChildNodes(parent) {
-    while (parent.firstChild) {
-        parent.removeChild(parent.firstChild);
-    }
-}
 
 function kreirajStranicu() {
     let stranica = document.createElement("div");
@@ -29,7 +24,7 @@ function kreirajStranicu() {
     naslovDiv.className = "divGBNaslov";
 
     let naslov = document.createElement("label");
-    naslov.innerHTML = "Skole van nastavnih aktivnosti";
+    naslov.innerHTML = "Škole van nastavnih aktivnosti";
     naslov.className = "lblNaslov";
     naslovDiv.appendChild(naslov);
     gornjiBar.appendChild(naslovDiv);
@@ -41,7 +36,7 @@ function kreirajStranicu() {
     let divLblSkole = document.createElement("div");
     divLblSkole.className = "divKontrolaNaslov";
     let lblSkole = document.createElement("label");
-    lblSkole.innerHTML = "Skole "
+    lblSkole.innerHTML = "Škole "
     lblSkole.className = "lblKontrolaNaslov";
     divLblSkole.appendChild(lblSkole);
     divSelectSkole.appendChild(divLblSkole);
@@ -84,20 +79,17 @@ function kreirajStranicu() {
     let donjiBar = document.createElement("div");
     donjiBar.className = "donjiBar";
     stranica.appendChild(donjiBar);
+
+    let lblDB = document.createElement("label");
+    lblDB.innerHTML = "Copyright © 2021 - 2022 Andrija Cenic 18042";
+    donjiBar.appendChild(lblDB);
 }
 function kreairajNavigaciju(nav) {
-    /*
-        nav.appendChild(kreirajDivButton("btnKontrola", "Aktivnosti", "divKontrola", prikazZaAktivnosti));
-    
-        nav.appendChild(kreirajDivButton("btnKontrola", "Ucenici", "divKontrola", prikazZaUcenike));
-    
-        nav.appendChild(kreirajDivButton("btnKontrola", "Nastavnici", "divKontrola", prikazNastavnici));
-        */
     let selekcija = document.createElement("select");
     selekcija.className = "selKontrola";
     selekcija.id = "selectKontrolee"
     selekcija.appendChild(kreirajOpcijuZaSelekt("Aktivnosti", 1));
-    selekcija.appendChild(kreirajOpcijuZaSelekt("Ucenici", 2));
+    selekcija.appendChild(kreirajOpcijuZaSelekt("Učenici", 2));
     selekcija.appendChild(kreirajOpcijuZaSelekt("Nastavnici", 3));
 
     selekcija.onchange = (e) => {
@@ -118,27 +110,16 @@ function kreairajNavigaciju(nav) {
 function prikazNastavnici() {
     let sadrzaj = document.getElementById("sadrzaj");
     removeAllChildNodes(sadrzaj);
-    let btn = document.getElementsByClassName("btnKontrola");
-    /*
-    btn.item(2).className = "btnKontrola btnSelected";
-    btn.item(0).className = "btnKontrola";
-    btn.item(1).className = "btnKontrola";
-*/
+
     let nastForma = new NastavnikForma();
     nastForma.crtaj(sadrzaj);
 }
 function prikazZaAktivnosti() {
     let sadrzaj = document.getElementById("sadrzaj");
     removeAllChildNodes(sadrzaj);
-    /*
-    let btn = document.getElementsByClassName("btnKontrola");
-    btn.item(0).className = "btnKontrola btnSelected";
-    btn.item(1).className = "btnKontrola";
-    btn.item(2).className = "btnKontrola";*/
 
     let aktForma = new AktivnostForma();
     aktForma.crtaj(sadrzaj);
-
 }
 function upisiSkole() {
     let slSkole = document.getElementById("selectSkole");
@@ -152,29 +133,25 @@ function upisiSkole() {
 }
 function ucitajSkole() {
     fetch("https://localhost:5001/Skola/PreuzmiSkole").then(s => {
-        s.json().then(skole => {
-            skole.forEach(skola => {
-                let sk = new Skola(skola.id, skola.naziv, skola.tip);
-                sveSkole.push(sk);
+        if (!s.ok) {
+            window.alert("Nije moguce ucitati skole!");
+        } else {
+            s.json().then(skole => {
+                skole.forEach(skola => {
+                    let sk = new Skola(skola.id, skola.naziv, skola.tip);
+                    sveSkole.push(sk);
+                });
+                upisiSkole();
+                prikazZaAktivnosti();
             });
-            upisiSkole();
-            prikazZaAktivnosti();
-        });
-
+        }
     });
 }
 
 function prikazZaUcenike() {
     let sadrzaj = document.getElementById("sadrzaj");
     removeAllChildNodes(sadrzaj);
-    /*
-    let btn = document.getElementsByClassName("btnKontrola");
-    btn.item(1).className = "btnKontrola btnSelected";
-    btn.item(0).className = "btnKontrola";
-    btn.item(2).className = "btnKontrola";
-*/
+
     let ucenikForma = new UcenikForma();
     ucenikForma.crtaj(sadrzaj);
-
-    //console.log("UCENICI");
 }

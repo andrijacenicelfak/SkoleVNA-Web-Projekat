@@ -8,7 +8,6 @@ using Models;
 
 namespace SkolaVanNastavnihAktivnosti.Controllers
 {
-
     [ApiController]
     [Route("[controller]")]
     public class AktivnostController : ControllerBase
@@ -19,7 +18,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         {
             Context = context;
         }
-        //OVO MI JE POTREBNO
+
         [EnableCors("CORS")]
         [Route("VratiAktivnostiZaSkolu/{SkolaID}")]
         [HttpGet]
@@ -27,30 +26,44 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         {
             try
             {
-                return Ok(await Context.Aktivnosti.Where(p => p.Skola.ID == SkolaID).Select(p => new
+                var skola = await Context.Skole.Where(p => p.ID == SkolaID).FirstAsync();
+                if (skola == null)
+                    throw new Exception("Skola ne postoji!");
+                var aktivnosti = await Context.Aktivnosti.Where(p => p.Skola.ID == SkolaID).Select(p => new
                 {
                     aktivnostID = p.ID,
                     aktivnostNaziv = p.Naziv,
                     aktivnostCena = p.Cena,
                     nastavnikID = p.Nastavnik.ID,
                     aktivnostBrojDana = p.BrojDanaUNedelji
-                }).ToListAsync());
+                }).ToListAsync();
+                return Ok(aktivnosti);
             }
             catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
         }
+
         [EnableCors("CORS")]
         [Route("DodajAktivnost/{Naziv}/{Cena}/{IdSkole}/{BrojDana}/{IDNastavnika}")]
         [HttpPost]
         public async Task<ActionResult> DodajAktivnost(string Naziv, int Cena, int IdSkole, int BrojDana, int IDNastavnika)
         {
+            if (string.IsNullOrWhiteSpace(Naziv) || Naziv.Length > 30)
+                return BadRequest($"Parametar 'Naziv aktivnosti' : {Naziv} nije moguc!");
+            if (Cena < 0 || Cena > 5000)
+                return BadRequest($"Parametar 'Cena aktivnosti' : {Cena} nije moguc!");
+            if (BrojDana < 1 || BrojDana > 7)
+                return BadRequest($"Parametar 'Broj dana' : {BrojDana} nije mogu'!");
             try
             {
                 var nastavnik = await Context.Nastavnici.Where(p => p.ID == IDNastavnika).FirstOrDefaultAsync();
                 var skola = await Context.Skole.Where(p => p.ID == IdSkole).FirstOrDefaultAsync();
-
+                if (nastavnik == null)
+                    throw new Exception("Ne postoji nastavnik sa tim ID-jem!");
+                if (skola == null)
+                    throw new Exception("Ne postoji skola sa tim ID-jem!");
 
                 Aktivnost akt = new Aktivnost();
                 akt.Naziv = Naziv;
@@ -71,6 +84,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 return BadRequest(e.Message);
             }
         }
+
         [EnableCors("CORS")]
         [Route("ZameniNastavnika/{AktivnostID}/{NastavnikID}")]
         [HttpPut]
@@ -99,15 +113,18 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 return BadRequest(e.Message);
             }
         }
+
         [EnableCors("CORS")]
-        [Route("ObrisiAktivnost/{ID}")]
+        [Route("ObrisiAktivnost/{AktivnostID}")]
         [HttpDelete]
-        public async Task<ActionResult> ObrisiAktivnost(int ID)
+        public async Task<ActionResult> ObrisiAktivnost(int AktivnostID)
         {
             try
             {
-                var aktivnost = await Context.Aktivnosti.Where(p => p.ID == ID).FirstAsync();
-                var pohadjaLista = await Context.PohadjaAktivnost.Where(p => p.Aktivnost.ID == ID).ToListAsync();
+                var aktivnost = await Context.Aktivnosti.Where(p => p.ID == AktivnostID).FirstAsync();
+                if (aktivnost == null)
+                    throw new Exception("Ne postoji aktivnost sa tim ID-jem!");
+                var pohadjaLista = await Context.PohadjaAktivnost.Where(p => p.Aktivnost.ID == AktivnostID).ToListAsync();
                 foreach (var poh in pohadjaLista)
                 {
                     Context.Remove(poh);
@@ -117,7 +134,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
 
                 await Context.SaveChangesAsync();
 
-                return Ok($"Obrisina skola sa ID : ${ID}");
+                return Ok($"Obrisana aktivnost sa ID : ${AktivnostID}");
             }
             catch (Exception e)
             {

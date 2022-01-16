@@ -21,6 +21,7 @@ body{
     flex-wrap: wrap;
 }
 .sadrzaj{
+    padding-top: 7px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -145,6 +146,7 @@ table{
     border: none;
     font-size: 120%;
     cursor: pointer;
+    transition: 0.6s;
 }
 .selKontrola:hover{
     background: rgb(78, 97, 202);
@@ -171,4 +173,11 @@ option{
     display: flex;
     flex-grow: 0.1;
     justify-content: center;
+}
+.donjiBar{
+    background-color: rgb(41, 47, 99);
+    display: flex;
+    justify-content: end;
+    color :aliceblue;
+    font-size: 0.8rem;
 }

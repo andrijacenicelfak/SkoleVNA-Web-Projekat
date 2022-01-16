@@ -17,7 +17,7 @@ namespace Models
 
         public DateTime PoslednjePlacanje { get; set; }
 
-        [Range(1, 5)]
+        [Range(0, 5)]
         public int Ocena { get; set; }
 
     }

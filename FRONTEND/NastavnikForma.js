@@ -1,5 +1,3 @@
-import { Aktivnost } from "./Aktivnost.js";
-import { Ucenik } from "./Ucenik.js";
 import { Nastavnik } from "./Nastavnik.js";
 import { kreirajDivTextITextBox } from "./funkcije.js";
 import { kreirajDivButton } from "./funkcije.js";
@@ -29,6 +27,9 @@ export class NastavnikForma {
 
         fetch("https://localhost:5001/Nastavnik/ZameniOcena/" + NastavnikID + "/" + Ocena, { method: "PUT" }).then(p => {
             this.pribaviNastavnike();
+            if (!p.ok) {
+                window.alert("Nije moguce zameniti ocenu!");
+            }
         });
     }
     pribaviNastavnike() {
@@ -36,13 +37,17 @@ export class NastavnikForma {
         let skolaID = slSkole.options[slSkole.selectedIndex].value;
         this.listaNastavnika.length = 0;
         fetch("https://localhost:5001/Nastavnik/VratiNastavnike/" + skolaID).then(p => {
-            p.json().then(nastavnici => {
-                nastavnici.forEach(nastavnik => {
-                    this.listaNastavnika.push(new Nastavnik(nastavnik.id, nastavnik.ime, nastavnik.prezime, nastavnik.ocena, nastavnik.brojAktivnosti));
+            if (!p.ok) {
+                window.alert("Nije moguce pribaviti nastavnike!");
+            } else {
+                p.json().then(nastavnici => {
+                    nastavnici.forEach(nastavnik => {
+                        this.listaNastavnika.push(new Nastavnik(nastavnik.id, nastavnik.ime, nastavnik.prezime, nastavnik.ocena, nastavnik.brojAktivnosti));
 
+                    });
+                    this.updateTabelu();
                 });
-                this.updateTabelu();
-            });
+            }
         })
     }
     dodajNastavnika() {
@@ -52,7 +57,12 @@ export class NastavnikForma {
         document.getElementById("imeNastavnika").value = "";
         document.getElementById("prezimeNastavnika").value = "";
         document.getElementById("OcenaNastavnika").value = "";
-        fetch("https://localhost:5001/Nastavnik/DodajNastavnika/" + ime + "/" + prezime + "/" + Ocena, { method: "POST" }).then(p => { this.pribaviNastavnike(); });
+        fetch("https://localhost:5001/Nastavnik/DodajNastavnika/" + ime + "/" + prezime + "/" + Ocena, { method: "POST" }).then(p => {
+            if (!p.ok) {
+                window.alert("Nije moguce dodati nastavnika!");
+            }
+            this.pribaviNastavnike();
+        });
     }
 
     crtajDivDodaj(host) {

@@ -69,3 +69,20 @@ export function kreirajOpcijuZaSelekt(optionText, optionValue) {
     op.innerHTML = optionText;
     return op;
 }
+
+export function kreirajDivSaLbliLblSaIDjem(divClass, lbl1Text, lbl2ID, lblClass) {
+    let div = document.createElement("div");
+    div.className = divClass;
+
+    let lbl1 = document.createElement("label");
+    lbl1.className = lblClass;
+    lbl1.innerHTML = lbl1Text;
+    div.appendChild(lbl1);
+
+    let lbl2 = document.createElement("label");
+    lbl2.className = lblClass;
+    lbl2.id = lbl2ID;
+    div.appendChild(lbl2);
+
+    return div;
+}

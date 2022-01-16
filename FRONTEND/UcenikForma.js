@@ -1,6 +1,5 @@
 import { Aktivnost } from "./Aktivnost.js";
 import { Ucenik } from "./Ucenik.js";
-import { Nastavnik } from "./Nastavnik.js";
 import { kreirajDivTextITextBox } from "./funkcije.js";
 import { kreirajDivButton } from "./funkcije.js";
 import { removeAllChildNodes } from "./funkcije.js";
@@ -52,21 +51,27 @@ export class UcenikForma {
         let Prezime = document.getElementById("tbxPrezimeKontrola").value;
         let BrojTelefonaRoditelja = document.getElementById("tbxBrojKontrola").value;
         let ImeRoditelja = document.getElementById("tbxImeRoditeljaKontrola").value;
-        /* Treba Provara TODO */
+
         document.getElementById("tbxImeKontrola").value = "";
         document.getElementById("tbxPrezimeKontrola").value = "";
         document.getElementById("tbxBrojKontrola").value = "";
         document.getElementById("tbxImeRoditeljaKontrola").value = "";
         fetch("https://localhost:5001/Ucenik/DodajUcenika/" + Ime + "/" + Prezime + "/" + ImeRoditelja + "/" + BrojTelefonaRoditelja, { method: "POST" }).then(p => {
             this.pribaviUcenikeBezAktivnosti();
+            if (!p.ok) {
+                window.alert("Podaci o uceniku nisu validni!");
+            }
         });
     }
     upisiUcenika(AktivnostID) {
         let red = document.getElementById("selektovanRed");
         if (red != null) {
             let UcenikID = red.value;
-            fetch("https://localhost:5001/UpisiUcenika/" + UcenikID + "/" + AktivnostID, { method: "POST" }).then(p => {
+            fetch("https://localhost:5001/Pohadja/UpisiUcenika/" + UcenikID + "/" + AktivnostID, { method: "POST" }).then(p => {
                 this.pribaviUcenikeBezAktivnosti();
+                if (!p.ok) {
+                    window.alert("Nije moguce upisati ucenika u aktivnost!");
+                }
             });
         } else {
             window.alert("Selektuj Ucenika!");
@@ -78,12 +83,13 @@ export class UcenikForma {
             window.alert("Unesi broj telefona roditelja za pretragu!");
         } else {
             fetch("https://localhost:5001/Ucenik/PretraziUcenike/" + brTel).then(p => {
-                if (p.status === 204) {
+                if (!p.ok) {
                     window.alert("Nema takvog ucenika!");
                 } else {
                     p.json().then(ucenici => {
                         this.listaUcenika.length = 0;
-
+                        if (ucenici.length === 0)
+                            window.alert("Nije pronadjen ni jedan ucenik!");
                         ucenici.forEach(ucenik => {
                             this.listaUcenika.push(new Ucenik(ucenik.id, ucenik.ime, ucenik.prezime, ucenik.brojTelefonaRoditelja, ucenik.imeRoditelja, -1, "", 0));
                             this.updateTabeluUcenika();
@@ -99,8 +105,10 @@ export class UcenikForma {
             if (red != null) {
                 let UcenikID = red.value;
                 fetch("https://localhost:5001/Ucenik/ObrisiUcenika/" + UcenikID, { method: "DELETE" }).then(p => {
-                    console.log(p);
                     this.pribaviUcenikeBezAktivnosti();
+                    if (!p.ok) {
+                        window.alert("Nije moguce obrisati ucenika!");
+                    }
                 });
             } else {
                 window.alert("Selektuj Ucenika!");
@@ -109,7 +117,7 @@ export class UcenikForma {
     }
     //Crtanje
     crtajDivDodaj(host) {
-        host.appendChild(kreirajDiviLabel("divKontrolaNaslov", "Dodaj novog ucenika", "lblKontrola lblKontrolaNaslov"));
+        host.appendChild(kreirajDiviLabel("divKontrolaNaslov", "Dodaj novog učenika", "lblKontrola lblKontrolaNaslov"));
         host.appendChild(kreirajDivTextITextBox("Ime", "lblKontrola", "tbxKontrola", "text", "tbxImeKontrola", "divKontrola"));
         host.appendChild(kreirajDivTextITextBox("Prezime", "lblKontrola", "tbxKontrola", "text", "tbxPrezimeKontrola", "divKontrola"));
         host.appendChild(kreirajDivTextITextBox("Broj Telefona Roditelja", "lblKontrola", "tbxKontrola", "number", "tbxBrojKontrola", "divKontrola"));
@@ -119,7 +127,7 @@ export class UcenikForma {
         divBtnDodaj.className = "divKontrola";
         let btnDodaj = document.createElement("button");
         btnDodaj.className = "btnKontrola";
-        btnDodaj.innerHTML = "Dodaj Ucenika";
+        btnDodaj.innerHTML = "Dodaj Učenika";
         btnDodaj.onclick = (ev) => { this.dodajUcenika(); }
         divBtnDodaj.appendChild(btnDodaj);
         host.appendChild(divBtnDodaj);
@@ -234,19 +242,19 @@ export class UcenikForma {
         divAktivnost.appendChild(selAktivnost);
 
         //dugme upisi
-        host.appendChild(kreirajDivButton("btnKontrola", "Upisi Ucenika", "divKontrola", (ev) => { this.upisiUcenika(selAktivnost.options[selAktivnost.selectedIndex].value); }));
+        host.appendChild(kreirajDivButton("btnKontrola", "Upisi Učenika", "divKontrola", (ev) => { this.upisiUcenika(selAktivnost.options[selAktivnost.selectedIndex].value); }));
 
         // broj telefona za pretragu
         host.appendChild(kreirajDivTextITextBox("Broj Telefona", "lblKontrola", "tbxKontrola", "number", "tbxBrojTelefonaPretraga", "divKontrola"));
 
         //dugme za pretragu
-        host.appendChild(kreirajDivButton("btnKontrola", "Pretrazi", "divKontrola", (ev) => { this.pretraziUcenika() }))
+        host.appendChild(kreirajDivButton("btnKontrola", "Pretraži", "divKontrola", (ev) => { this.pretraziUcenika() }))
 
         // dugme za prikaz ucenika bez aktivnosti
-        host.appendChild(kreirajDivButton("btnKontrola", "Prikazi Ucenike bez Aktivnosti", "divKontrola", (ev) => { this.pribaviUcenikeBezAktivnosti(); }));
+        host.appendChild(kreirajDivButton("btnKontrola", "Prikaži Učenike bez Aktivnosti", "divKontrola", (ev) => { this.pribaviUcenikeBezAktivnosti(); }));
 
         //izbrisi selektovanog ucenika iz skole
-        host.appendChild(kreirajDivButton("btnKontrola", "Obrisi Ucenika", "divKontrola", (ev) => { this.obrisiUcenika(); }));
+        host.appendChild(kreirajDivButton("btnKontrola", "Obriši Učenika", "divKontrola", (ev) => { this.obrisiUcenika(); }));
 
     }
     crtaj(host) {

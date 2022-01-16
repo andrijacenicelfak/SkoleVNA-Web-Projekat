@@ -9,24 +9,16 @@ using System.Collections.Generic;
 
 namespace SkolaVanNastavnihAktivnosti.Controllers
 {
-
     [ApiController]
     [Route("[controller]")]
     public class UcenikController : ControllerBase
     {
-
         public SkolaContext Context { get; set; }
         public UcenikController(SkolaContext context)
         {
             Context = context;
         }
-        ///<summary>
-        /// Dodaje ucenika u bazu
-        ///</summary>
-        /// <param name="Ime"> Ime ucenika kog zelimo da dodamo.</param>
-        /// <param name="Prezime"> Prezime ucenika kog zelimo da dodamo.</param>
-        /// <param name="ImeRoditelja"> Ime roditelja ucenika kog zelimo da dodamo.</param>
-        /// <param name="BrTelRod"> Broj telefona roditelja ucenika kog zelimo da dodamo.</param>
+
         [EnableCors("CORS")]
         [Route("DodajUcenika/{Ime}/{Prezime}/{ImeRoditelja}/{BrTelRod}")]
         [HttpPost]
@@ -43,14 +35,27 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
 
             if (string.IsNullOrWhiteSpace(BrTelRod) || BrTelRod.Length > 30)
                 return BadRequest($"Parametar 'Broj telefona roditelja ucenika' : {BrTelRod} nije moguc!");
-            Ucenik ucenik = new Ucenik();
-            ucenik.Ime = Ime;
-            ucenik.Prezime = Prezime;
-            ucenik.ImeRoditelja = ImeRoditelja;
-            ucenik.BrojTelefonaRoditelja = BrTelRod;
+
+            bool onlyDig = true;
+            char[] charList = BrTelRod.ToCharArray();
+            int i = 0;
+            while (i < charList.Count() && onlyDig)
+            {
+                if (charList[i] < '0' || charList[i] > '9')
+                    onlyDig = false;
+                i++;
+            }
+
+            if (!onlyDig)
+                return BadRequest($"Parametar 'Broj telefona roditelja' nevalidan! Moguce je koristiti samo brojeve!");
 
             try
             {
+                Ucenik ucenik = new Ucenik();
+                ucenik.Ime = Ime;
+                ucenik.Prezime = Prezime;
+                ucenik.ImeRoditelja = ImeRoditelja;
+                ucenik.BrojTelefonaRoditelja = BrTelRod;
 
                 Context.Ucenici.Add(ucenik);
                 await Context.SaveChangesAsync();
@@ -66,9 +71,11 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         [HttpGet]
         [Route("PretraziUcenike/{BrojTelefonaRoditelja}")]
         [EnableCors("CORS")]
-
         public async Task<ActionResult> PretraziUcenike(string BrojTelefonaRoditelja)
         {
+            if (string.IsNullOrWhiteSpace(BrojTelefonaRoditelja) || BrojTelefonaRoditelja.Length > 30)
+                return BadRequest($"Parametar 'Broj telefona roditelja ucenika' : {BrojTelefonaRoditelja} nije moguc!");
+
             bool onlyDig = true;
             char[] charList = BrojTelefonaRoditelja.ToCharArray();
             int i = 0;
@@ -79,13 +86,14 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 i++;
             }
 
-            if (string.IsNullOrWhiteSpace(BrojTelefonaRoditelja) || BrojTelefonaRoditelja.Length > 30 || !onlyDig)
-                return BadRequest($"Parametar 'Broj telefona roditelja ucenika' : {BrojTelefonaRoditelja} nije moguc!");
+            if (!onlyDig)
+                return BadRequest($"Parametar 'Broj telefona roditelja' nevalidan! Moguce je koristiti samo brojeve!");
 
             try
             {
-
                 var ucenik = await Context.Ucenici.Where(p => p.BrojTelefonaRoditelja.Equals(BrojTelefonaRoditelja)).ToListAsync();
+                if (ucenik == null)
+                    throw new Exception("Nema takvog ucenika!");
                 return Ok(ucenik);
             }
             catch (Exception e)
@@ -93,6 +101,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 return BadRequest(e.Message);
             }
         }
+
         [HttpDelete]
         [EnableCors("CORS")]
         [Route("ObrisiUcenika/{UcenikID}")]
@@ -100,9 +109,9 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         {
             try
             {
-                var ucenik = await Context.Ucenici.Where(p => p.ID == UcenikID).FirstOrDefaultAsync();
+                var ucenik = await Context.Ucenici.Where(p => p.ID == UcenikID).FirstAsync();
                 if (ucenik == null)
-                    throw new Exception("Greska, nema takve aktivnosti ili ucenika!");
+                    throw new Exception("Ne postoji ucenik sa takvim ID-jem!");
                 var listaPohadja = await Context.PohadjaAktivnost.Where(p => p.Ucenik.ID == UcenikID).ToListAsync();
 
                 foreach (var poh in listaPohadja)
@@ -111,7 +120,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 }
                 Context.Remove(ucenik);
                 await Context.SaveChangesAsync();
-                return Ok("Postavljen novi datum placanja!");
+                return Ok($"Obrisan ucenik sa ID-jem {UcenikID}!");
             }
             catch (Exception e)
             {

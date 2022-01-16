@@ -8,7 +8,6 @@ using Models;
 
 namespace SkolaVanNastavnihAktivnosti.Controllers
 {
-
     [ApiController]
     [Route("[controller]")]
     public class PohadjaController : ControllerBase
@@ -27,7 +26,10 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         {
             try
             {
-                var nesto = Context.PohadjaAktivnost.Include(p => p.Aktivnost).Where(a => a.Aktivnost.ID == AktivnostID).Include(p => p.Ucenik).Select(p => new
+                var aktivnost = await Context.Aktivnosti.Where(p => p.ID == AktivnostID).FirstAsync();
+                if (aktivnost == null)
+                    throw new Exception("Ne postoji aktivnost sa tim ID-jem!");
+                var ucenici = await Context.PohadjaAktivnost.Include(p => p.Aktivnost).Where(a => a.Aktivnost.ID == AktivnostID).Include(p => p.Ucenik).Select(p => new
                 {
                     ime = p.Ucenik.Ime,
                     prezime = p.Ucenik.Prezime,
@@ -36,9 +38,9 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                     imeRoditelja = p.Ucenik.ImeRoditelja,
                     poslednjiDatumPlacanje = p.PoslednjePlacanje.ToShortDateString(),
                     ocena = p.Ocena
-                });
+                }).ToListAsync();
 
-                return Ok(await nesto.ToListAsync());
+                return Ok(ucenici);
             }
             catch (Exception e)
             {
@@ -46,17 +48,20 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 return BadRequest(e.Message);
             }
         }
+
         [HttpPost]
         [EnableCors("CORS")]
-        [Route("/UpisiUcenika/{UcenikID}/{AktivnostID}")]
+        [Route("UpisiUcenika/{UcenikID}/{AktivnostID}")]
         public async Task<ActionResult> UpisiUcenika(int UcenikID, int AktivnostID)
         {
             try
             {
-                var ucenik = await Context.Ucenici.Where(p => p.ID == UcenikID).FirstOrDefaultAsync();
-                var aktivnost = await Context.Aktivnosti.Where(p => p.ID == AktivnostID).FirstOrDefaultAsync();
-                if (ucenik == null || aktivnost == null)
-                    throw new Exception("Nema takvih ucenika i/ili aktivnosti!");
+                var ucenik = await Context.Ucenici.Where(p => p.ID == UcenikID).FirstAsync();
+                if (ucenik == null)
+                    throw new Exception("Ne postoji ucenik sa tim ID-jem!");
+                var aktivnost = await Context.Aktivnosti.Where(p => p.ID == AktivnostID).FirstAsync();
+                if (aktivnost == null)
+                    throw new Exception("Ne postoji aktivnost sa tim ID-jem!");
                 Pohadja p = new Pohadja();
                 p.Ucenik = ucenik;
                 p.Aktivnost = aktivnost;
@@ -96,8 +101,16 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         [Route("UpisiOcenu/{UcenikID}/{AktivnostID}/{Ocena}")]
         public async Task<ActionResult> UpisiOcenu(int UcenikID, int AktivnostID, int Ocena)
         {
+            if (Ocena <= 0 || Ocena > 5)
+                return BadRequest($"Parametar 'Ocena' : {Ocena} nije validan!");
             try
             {
+                var ucenik = await Context.Ucenici.Where(p => p.ID == UcenikID).FirstAsync();
+                if (ucenik == null)
+                    throw new Exception("Ne postoji ucenik sa tim ID-jem!");
+                var aktivnost = await Context.Aktivnosti.Where(p => p.ID == AktivnostID).FirstAsync();
+                if (aktivnost == null)
+                    throw new Exception("Ne postoji aktivnost sa tim ID-jem!");
                 var poh = await Context.PohadjaAktivnost.Where(p => p.Aktivnost.ID == AktivnostID && p.Ucenik.ID == UcenikID).FirstOrDefaultAsync();
                 if (poh == null)
                     throw new Exception("Greska, nema takve aktivnosti ili ucenika!");
@@ -135,6 +148,13 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
         {
             try
             {
+                var ucenik = await Context.Ucenici.Where(p => p.ID == UcenikID).FirstAsync();
+                if (ucenik == null)
+                    throw new Exception("Ne postoji ucenik sa tim ID-jem!");
+                var aktivnost = await Context.Aktivnosti.Where(p => p.ID == AktivnostID).FirstAsync();
+                if (aktivnost == null)
+                    throw new Exception("Ne postoji aktivnost sa tim ID-jem!");
+
                 var poh = await Context.PohadjaAktivnost.Where(p => p.Aktivnost.ID == AktivnostID && p.Ucenik.ID == UcenikID).FirstOrDefaultAsync();
                 if (poh == null)
                     throw new Exception("Greska, nema takve aktivnosti ili ucenika!");
@@ -147,6 +167,5 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 return BadRequest(e.Message);
             }
         }
-
     }
 }
