@@ -18,13 +18,9 @@ Sa desne strane selekcija aktivnosti za upis učenika, i pretraživanje učenika
 
 
 ###### Problemi:
+1. U slucaju browsera Edge : *GET https://localhost:5001/Skola/PreuzmiSkole net::ERR_CERT_AUTHORITY_INVALID*.Kod Firefox-a radi sve, ovde nece.
 
-U slucaju browsera Edge : 
-GET https://localhost:5001/Skola/PreuzmiSkole net::ERR_CERT_AUTHORITY_INVALID
+2. Textbox elementi sa type = "number" omgogucuju da se u njima upise i text -> Mozda je samo problem na Firefox-u, ne mogu da testiram na Edge-u
 
-Kod Firefox-a radi sve, ovde nece.
-
-Textbox-ovi sa type = "number" omgogucuju da se u njima upise i text -> Mozda je samo problem na Firefox-u, ne mogu da testiram na Edge-u
-
-Problem sa pribavljanjem informacija sa servera pri pokretanju prvi put.
+3. Problem sa pribavljanjem informacija sa servera pri pokretanju prvi put.
 
