@@ -24,3 +24,10 @@ Sa desne strane selekcija aktivnosti za upis učenika, i pretraživanje učenika
 
 3. Problem sa pribavljanjem informacija sa servera pri pokretanju prvi put.
 
+```diff
+- text in red
++ text in green
+! text in orange
+# text in gray
+@@ text in purple (and bold)@@
+```
