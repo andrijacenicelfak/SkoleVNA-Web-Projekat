@@ -66,7 +66,7 @@ namespace SkolaVanNastavnihAktivnosti.Controllers
                 Pohadja p = new Pohadja();
                 p.Ucenik = ucenik;
                 p.Aktivnost = aktivnost;
-                p.PoslednjePlacanje = DateTime.Today.AddDays(-35); // Mora da plati da bi mogao da upise
+                p.PoslednjePlacanje = DateTime.Today; // Mora da plati da bi mogao da upise
                 Context.PohadjaAktivnost.Add(p);
                 await Context.SaveChangesAsync();
                 return Ok($"Uspesno upisan ucenik u aktivnost!");
