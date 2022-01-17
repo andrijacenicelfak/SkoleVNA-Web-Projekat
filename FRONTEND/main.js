@@ -1,4 +1,3 @@
-import { Ucenik } from "./Ucenik.js";
 import { Skola } from "./Skola.js";
 import { AktivnostForma } from "./AktivnostForma.js";
 import { UcenikForma } from "./UcenikForma.js";
