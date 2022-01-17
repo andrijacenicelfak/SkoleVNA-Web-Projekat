@@ -22,7 +22,8 @@ Sa desne strane selekcija aktivnosti za upis učenika, i pretraživanje učenika
 ![nastavnici](screenshots/nastavnici.jpg)
 ![nastavnici-p](screenshots/nastavnici-p.jpg)
 
-###### Problemi:1. U slucaju browsera Edge : *GET https://localhost:5001/Skola/PreuzmiSkole net::ERR_CERT_AUTHORITY_INVALID*.Kod Firefox-a radi sve, ovde nece.
+###### Problemi:
+1. U slucaju browsera Edge : *GET https://localhost:5001/Skola/PreuzmiSkole net::ERR_CERT_AUTHORITY_INVALID*.Kod Firefox-a radi sve, ovde nece.
 
 2. Textbox elementi sa type = "number" omogućuju da se u njima upise i text -> Mozda je samo problem na Firefox-u, ne mogu da testiram na Edge-u
 
