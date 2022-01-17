@@ -128,7 +128,10 @@ export class AktivnostForma {
                     window.alert("Nije moguce pribaviti ucenike!");
                 } else {
                     ucenici.forEach(ucenik => {
-                        let uc = new Ucenik(ucenik.ucenikID, ucenik.ime, ucenik.prezime, ucenik.brojTelefonaRoditelja, ucenik.imeRoditelja, idAktivnosti, ucenik.poslednjiDatumPlacanje, ucenik.ocena);
+                        let placanje = "";
+                        if (ucenik.trebaDaPlati > 0)
+                            placanje = " ----- treba da plati!";
+                        let uc = new Ucenik(ucenik.ucenikID, ucenik.ime, ucenik.prezime, ucenik.brojTelefonaRoditelja, ucenik.imeRoditelja, idAktivnosti, ucenik.poslednjiDatumPlacanje + placanje, ucenik.ocena);
                         this.listaUcenika.push(uc);
                     });
                     this.updateListuUcenika();
